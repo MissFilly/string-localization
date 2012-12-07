@@ -10,7 +10,12 @@ class Android():
         langs = langs
     def generate_file(self, lang):
         if lang.name=='English':
-            strings = String.objects.filter(enabled=True, language=lang) # Filter for application
+            strings = String.objects.filter(enabled=True, language=lang,
+                                            app = app)
+        else:
+            strings = String.object.filter(enabled=True, language=lang,
+                                            original_string__app = app)
+
     def download_files(self):
         in_memory = StringIO()
 
