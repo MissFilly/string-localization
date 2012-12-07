@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+{% load custom_tags %}
+<h1>Modify strings</h1>
+{% if strings %}
+	<form action="" method="post">
+		{% csrf_token %}
+		{% for string in strings %}
+		<div class="string">
+			<p><span class="strong">Original text:</span> {{ string.original_string.text }} ({{ string.original_string.text|count_words }} words)</p>
+			{% if string.description %}
+			<button value="Modify" onclick="getElementsByName(this.id)[0].disabled = false" />
+			<p><span class="strong">Description:</span> {{ string.original_string.description }}</p>
+			{% endif %}
+			<p>
+				<label for="{{ string.id }}"><span class="strong">Your translation:</span></label>
+				<p><textarea disabled="disabled" name="{{ string.id }}" id="{{ string.id }}">{{ string.text }}</textarea></p>
+			</p>
+		</div>
+		{% endfor %}
+		<input type="submit" value="Save" />
+	</form>
+{% else %}
+	<p>You haven't made any translations yet.</p>
+{% endif %}
+	<div class="pagination">
+	    <span class="step-links">
+	        {% if strings.has_previous %}
+	            <a href="?page={{ strings.previous_page_number }}">Previous</a>
+	        {% endif %}
+	
+	        <span class="current">
+	            Page {{ strings.number }} of {{ strings.paginator.num_pages }}
+	        </span>
+	
+	        {% if strings.has_next %}
+	            <a href="?page={{ strings.next_page_number }}">next</a>
+	        {% endif %}
+	    </span>
+	</div>
+{% endblock %}
+
