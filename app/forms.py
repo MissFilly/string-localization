@@ -1,7 +1,8 @@
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.models import User
 from django.forms import ModelForm
-from app.models import Translator
+from app.models import Translator, App, Language
 
 class RegistrationForm(ModelForm):
     first_name = forms.CharField(label=(u'First name'))
@@ -34,3 +35,9 @@ class RegistrationForm(ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField(label=(u'User name'))
     password = forms.CharField(label=(u'Password'), widget=forms.PasswordInput(render_value=False))
+
+
+class GenerateForm(forms.Form):
+    app = forms.ModelChoiceField(queryset=App.objects.all())
+    language = forms.ModelMultipleChoiceField(queryset=Language.objects.all(),
+                                      widget=forms.CheckboxSelectMultiple())

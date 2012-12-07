@@ -1,14 +1,15 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from app.forms import RegistrationForm, LoginForm
-from app.models import Translator, String
+from app.forms import RegistrationForm, LoginForm, GenerateForm
+from app.models import Translator, String, Language
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
-from localization.utils import extra_funcs
+from localization.utils import extra_funcs, generate
 
 CURRENT_VALUES = {}
 
@@ -38,7 +39,6 @@ def TranslatorRegistration(request):
         else:
             return render_to_response('register.html', {'form': form},
                                       context_instance=RequestContext(request))
-
     else:
         ''' User is not submitting the form, show the blank form '''
         form = RegistrationForm()
@@ -87,8 +87,11 @@ def ProfileHandler(request):
 
 @login_required
 def TranslationHandler(request):
-    translator = request.user.get_profile()
-    strings_list = extra_funcs.strings_to_translate(request)
+    try:
+        translator = request.user.get_profile()
+        strings_list = extra_funcs.strings_to_translate(request)
+    except Translator.DoesNotExist:
+        return HttpResponseRedirect('/login/')
     if request.method=='POST':
         keys = request.POST.keys()
         keys.remove('csrfmiddlewaretoken')
@@ -173,3 +176,19 @@ def ModifyStringsHandler(request):
         context = {'strings': strings}
         return render_to_response('modify.html', context,
                                   context_instance=RequestContext(request))
+
+@staff_member_required
+def GenerateHandler(request):
+    if request.method=='POST':
+        form = GenerateForm(request.POST)
+        if form.is_valid():
+
+            return HttpResponse(form.cleaned_data['language'])
+        else:
+            return render_to_response('login.html', {'form': form},
+                                      context_instance=RequestContext(request))
+    else:
+        form = GenerateForm()
+        context = {'form': form}
+        return render_to_response('generate.html', context,
+                                      context_instance=RequestContext(request))

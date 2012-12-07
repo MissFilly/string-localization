@@ -34,7 +34,7 @@ body {
 
 #nav {
 	float: right;
-	margin-top: 27px;
+	margin-top: 26px;
 }
 
 #nav li {
@@ -76,9 +76,17 @@ h1 {
     background-color: #979797;
     border-radius: 15px 15px 15px 15px;
     margin-bottom: 25px;
-    padding: 25px 25px 10px;
+    padding: 25px 25px 6px;
+}
+
+.string p {
+	margin-bottom: 18px;
 }
 
 .strong {
 	font-weight: bold;
+}
+
+.top {
+	vertical-align: top;
 }

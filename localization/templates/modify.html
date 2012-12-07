@@ -7,14 +7,14 @@
 		{% csrf_token %}
 		{% for string in strings %}
 		<div class="string">
-			<p><span class="strong">Original text:</span> {{ string.original_string.text }} ({{ string.original_string.text|count_words }} words)</p>
+			<p><span class="strong">Original text:</span> {{ string.original_string.text }} ({{ string.original_string.text|count_words }} word{% if string.original_string.text|plural %}s{% endif %})</p>
 			{% if string.description %}
-			<button value="Modify" onclick="getElementsByName(this.id)[0].disabled = false" />
+			<button onclick="getElementsByName(this.id)[0].disabled = false">Modify</button>
 			<p><span class="strong">Description:</span> {{ string.original_string.description }}</p>
 			{% endif %}
 			<p>
-				<label for="{{ string.id }}"><span class="strong">Your translation:</span></label>
-				<p><textarea disabled="disabled" name="{{ string.id }}" id="{{ string.id }}">{{ string.text }}</textarea></p>
+				<label for="{{ string.id }}"><span class="strong top">Your translation:</span></label>
+				<textarea disabled="disabled" name="{{ string.id }}" id="{{ string.id }}">{{ string.text }}</textarea>
 			</p>
 		</div>
 		{% endfor %}
