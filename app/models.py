@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
+
 
 class Language(models.Model):
     name = models.CharField(max_length=30, verbose_name="Language name")
@@ -12,12 +15,14 @@ class Language(models.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.iso_639)
 
+
 class App(models.Model):
     name = models.CharField(max_length=30)
     platform = models.CharField(max_length=20)
 
     def __unicode__(self):
         return u'%s for %s' % (self.name, self.platform)
+
 
 class Translator(models.Model):
     user = models.OneToOneField(User)
@@ -26,6 +31,7 @@ class Translator(models.Model):
 
     def __unicode__(self):
         return '%s - %s' % (self.user.username, self.language.name)
+
 
 class String(models.Model):
     app = models.ManyToManyField(App)

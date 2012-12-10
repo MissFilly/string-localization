@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -162,9 +164,9 @@ def ModifyStringsHandler(request):
                         translator=translator,
                         id=int(key),
                         frozen=False
-                    ).update(
+                        ).update(
                         text=request.POST.get(key)
-                    )
+                        )
                 except String.DoesNotExist:
                     return HttpResponse('There was an error!')
             else:
@@ -172,10 +174,8 @@ def ModifyStringsHandler(request):
         CURRENT_VALUES = {}
         return HttpResponseRedirect('/modify/')
     else:
-        strings_list = String.objects.filter(
-            translator=translator,
-            frozen=False
-        )
+        strings_list = String.objects.filter(translator=translator,
+                                             frozen=False)
         paginator = Paginator(strings_list, 2)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
@@ -198,7 +198,8 @@ def GenerateHandler(request):
         if form.is_valid():
             language = form.cleaned_data['language']
             app = form.cleaned_data['app']
-            return generate.Android().download_files(language, app)
+            if app.platform.capitalize() == 'Android':
+                return generate.Android().download_files(language, app)
         else:
             return render_to_response('login.html', {'form': form},
                                       context_instance=RequestContext(request))

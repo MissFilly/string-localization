@@ -2,7 +2,6 @@
 
 from app.models import String
 from django.http import HttpResponse
-from django.core.servers.basehttp import FileWrapper
 from zipfile import ZipFile
 from StringIO import StringIO
 from lxml import etree
@@ -38,17 +37,23 @@ class Android():
                 zip_file.writestr('values-' + l.iso_639 + '/strings.xml',
                                   self.generate_file(l, app))
 
-        # fix for Linux zip files read in Windows
+        # Fix for Linux zip files read in Windows
         for file in zip_file.filelist:
             file.create_system = 0
 
         zip_file.close()
 
         response = HttpResponse(mimetype='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=%s.zip' \
-                                          % (app.__unicode__().replace(' ', '-'))
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
+                                          (app.__unicode__().replace(' ', '-'))
         response['Content-Length'] = in_memory.tell
 
         in_memory.seek(0)
         response.write(in_memory.read())
         return response
+
+
+class iOS():
+
+    def generate_file():
+        pass
