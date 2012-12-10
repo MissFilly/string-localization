@@ -6,8 +6,9 @@ from datetime import datetime
 
 
 class Language(models.Model):
-    name = models.CharField(max_length=30, verbose_name="Language name")
-    iso_639 = models.CharField(max_length=2, verbose_name="ISO 639-1")
+    name = models.CharField(max_length=30, verbose_name='Language name')
+    iso_639 = models.CharField(max_length=2, verbose_name='Language code')
+    iso_3166 = models.CharField(max_length=2, verbose_name='Subculture code')
 
     class Meta:
         ordering = ["name"]

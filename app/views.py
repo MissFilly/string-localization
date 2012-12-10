@@ -31,7 +31,8 @@ def TranslatorRegistration(request):
             user = User.objects.create_user(
                                        username=form.cleaned_data['username'],
                                        email=form.cleaned_data['email'],
-                                       password=form.cleaned_data['password'])
+                                       password=form.cleaned_data['password']
+                                       )
             user.first_name = form.cleaned_data['first_name']
             user.last_name = form.cleaned_data['last_name']
             user.save()
@@ -198,8 +199,10 @@ def GenerateHandler(request):
         if form.is_valid():
             language = form.cleaned_data['language']
             app = form.cleaned_data['app']
-            if app.platform.capitalize() == 'Android':
+            if app.platform.title() == 'Android':
                 return generate.Android().download_files(language, app)
+            elif app.platform.title() == 'Windows Phone':
+                return generate.WindowsPhone().download_files(language, app)
         else:
             return render_to_response('login.html', {'form': form},
                                       context_instance=RequestContext(request))
