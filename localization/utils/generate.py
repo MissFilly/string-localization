@@ -10,37 +10,44 @@ from lxml import etree
 class Android():
 
     def generate_file(self, lang, app):
+        root = etree.Element('resources')
         if lang.name == 'English':
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
+            for string in strings:
+                line = etree.SubElement(root, 'string',
+                                        name=string.android_name_string)
+                line.text = string.text
         else:
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
-        root = etree.Element('resources')
-        for string in strings:
-            try:
-                line = etree.SubElement(root, "string",
-                                        name=string.android_name_string)
+            for string in strings:
+                line = etree.SubElement(
+                                root, 'string',
+                                name=string.original_string.android_name_string
+                                )
                 line.text = string.text
-            # This is just to handle this error while developing.
-            # This error should NOT happen once the database y properly populated
-            except TypeError:
-                pass
         content = etree.tostring(root, encoding='utf-8',
                                  xml_declaration=True, pretty_print=True)
         return content
 
     def download_files(self, langs, app):
         in_memory = StringIO()
-
         zip_file = ZipFile(in_memory, 'a')
         for l in langs:
             if l.name == 'English':
                 zip_file.writestr('values/strings.xml',
                                   self.generate_file(l, app))
             else:
-                zip_file.writestr('values-' + l.iso_639 + '/strings.xml',
-                                  self.generate_file(l, app))
+                # There's more than one language register with that language
+                # code. Subculture code must be specified.
+                if langs.filter(iso_639=l.iso_639).count() > 1:
+                    zip_file.writestr('values-%s-r%s/strings.xml' %
+                                      (l.iso_639, l.iso_3166),
+                                      self.generate_file(l, app))
+                else:
+                    zip_file.writestr('values-%s/strings.xml' % l.iso_639,
+                                      self.generate_file(l, app))
 
         # Fix for Linux zip files read in Windows
         for file in zip_file.filelist:
@@ -58,32 +65,29 @@ class Android():
         return response
 
 
-class iOS():
-
-    def generate_file():
-        pass
-
-
 class WindowsPhone():
 
     def generate_file(self, lang, app):
+        root = etree.Element('root')
         if lang.name == 'English':
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
-        else:
-            strings = String.objects.filter(enabled=True, language=lang,
-                                            original_string__app=app)
-        root = etree.Element('root')
-        for string in strings:
-            try:
-                line = etree.SubElement(root, "data",
+            for string in strings:
+                line = etree.SubElement(root, 'data',
                                         name=string.wp_name_string)
                 value = etree.SubElement(line, "value")
                 value.text = string.text
-            except TypeError:
-                pass
-        content = etree.tostring(root, encoding='utf-8',
-                                 xml_declaration=True, pretty_print=True)
+        else:
+            strings = String.objects.filter(enabled=True, language=lang,
+                                            original_string__app=app)
+            for string in strings:
+                line = etree.SubElement(
+                                root, 'string',
+                                name=string.original_string.wp_name_string
+                                )
+                value = etree.SubElement(line, "value")
+                value.text = string.text
+        content = etree.tostring(root, encoding='utf-8', pretty_print=True)
         return content
 
     def download_files(self, langs, app):
@@ -91,8 +95,13 @@ class WindowsPhone():
 
         zip_file = ZipFile(in_memory, 'a')
         for l in langs:
-            zip_file.writestr('values-%s-%s.xml' % (l.iso_639, l.iso_3166),
-                              self.generate_file(l, app))
+            if l.name == 'English':
+                zip_file.writestr('Strings-AppResources.xml',
+                                  self.generate_file(l, app))
+            else:
+                zip_file.writestr('Strings-AppResources.%s-%s.xml' %
+                                  (l.iso_639, l.iso_3166),
+                                  self.generate_file(l, app))
 
         # Fix for Linux zip files read in Windows
         for file in zip_file.filelist:

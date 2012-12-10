@@ -14,7 +14,7 @@ class Language(models.Model):
         ordering = ["name"]
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.iso_639)
+        return u'%s (%s-%s)' % (self.name, self.iso_639, self.iso_3166)
 
 
 class App(models.Model):
