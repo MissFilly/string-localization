@@ -35,7 +35,7 @@ class Translator(models.Model):
 
 
 class String(models.Model):
-    app = models.ManyToManyField(App)
+    app = models.ManyToManyField(App, null=True, blank=True)
     text = models.TextField()
     description = models.TextField(null=True, blank=True)
     language = models.ForeignKey(Language)
