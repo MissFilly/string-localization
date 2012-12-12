@@ -117,3 +117,55 @@ class WindowsPhone():
         in_memory.seek(0)
         response.write(in_memory.read())
         return response
+
+
+class iOS():
+
+    def generate_file(self, lang, app):
+        content = u""
+        if lang.name == 'English':
+            strings = String.objects.filter(enabled=True, language=lang,
+                                            app=app)
+            for string in strings:
+                if string.description:
+                    content += '\n/* %s */' % string.description
+                content += '\n"%s" = "%s";' % (string.ios_name_string,
+                                               string.text)
+        else:
+            strings = String.objects.filter(enabled=True, language=lang,
+                                            original_string__app=app)
+            for string in strings:
+                if string.description:
+                    content += '\n/* %s */' % string.description
+                content += '\n"%s" = "%s";' % \
+                                       (string.original_string.ios_name_string,
+                                        string.text)
+        return content.encode('utf-16')
+
+    def download_files(self, langs, app):
+        in_memory = StringIO()
+
+        zip_file = ZipFile(in_memory, 'a')
+        for l in langs:
+            if langs.filter(iso_639=l.iso_639).count() > 1:
+                zip_file.writestr('%s_%s.lproj/Localizable.strings' %
+                                  (l.iso_639, l.iso_3166),
+                                  self.generate_file(l, app))
+            else:
+                zip_file.writestr('%s.lproj/Localizable.strings' % l.iso_639,
+                                  self.generate_file(l, app))
+
+        # Fix for Linux zip files read in Windows
+        for file in zip_file.filelist:
+            file.create_system = 0
+
+        zip_file.close()
+
+        response = HttpResponse(mimetype='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
+                                          (app.__unicode__().replace(' ', '-'))
+        response['Content-Length'] = in_memory.tell
+
+        in_memory.seek(0)
+        response.write(in_memory.read())
+        return response

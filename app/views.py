@@ -199,10 +199,13 @@ def GenerateHandler(request):
         if form.is_valid():
             language = form.cleaned_data['language']
             app = form.cleaned_data['app']
-            if app.platform.title() == 'Android':
+            platform = app.platform.replace(' ', '').lower()
+            if platform == 'android':
                 return generate.Android().download_files(language, app)
-            elif app.platform.title() == 'Windows Phone':
+            elif platform == 'windowsphone':
                 return generate.WindowsPhone().download_files(language, app)
+            elif platform == 'ios':
+                return generate.iOS().download_files(language, app)
         else:
             return render_to_response('login.html', {'form': form},
                                       context_instance=RequestContext(request))
