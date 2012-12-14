@@ -73,20 +73,30 @@ class WindowsPhone():
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
             for string in strings:
-                line = etree.SubElement(root, 'data',
-                                        name=string.wp_name_string)
-                value = etree.SubElement(line, "value")
+                line = etree.SubElement(
+                                root, 'data',
+                                name=string.wp_name_string, attrib=
+                                {'{http://www.w3.org/XML/1998/namespace}space':
+                                'preserve'})
+                value = etree.SubElement(line, 'value')
                 value.text = string.text
+                if string.description:
+                    comment = etree.SubElement(line, 'comment')
+                    comment.text = string.description
         else:
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
                 line = etree.SubElement(
-                                root, 'string',
-                                name=string.original_string.wp_name_string
-                                )
-                value = etree.SubElement(line, "value")
+                            root, 'string',
+                            name=string.original_string.wp_name_string, attrib=
+                            {'{http://www.w3.org/XML/1998/namespace}space':
+                            'preserve'})
+                value = etree.SubElement(line, 'value')
                 value.text = string.text
+                if string.original_string.description:
+                    comment = etree.SubElement(line, 'comment')
+                    comment.text = string.original_string.description
         content = etree.tostring(root, encoding='utf-8', pretty_print=True)
         return content
 
@@ -128,15 +138,16 @@ class iOS():
                                             app=app)
             for string in strings:
                 if string.description:
-                    content += '\n/* %s */' % string.description
+                    content += '\n\n/* %s */' % string.description
                 content += '\n"%s" = "%s";' % (string.ios_name_string,
                                                string.text)
         else:
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
-                if string.description:
-                    content += '\n/* %s */' % string.description
+                if string.original_string.description:
+                    content += '\n\n/* %s */' % \
+                                        string.original_string.description
                 content += '\n"%s" = "%s";' % \
                                        (string.original_string.ios_name_string,
                                         string.text)
