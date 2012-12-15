@@ -214,7 +214,7 @@ def GenerateHandler(request):
                 return generate.Android().download_files(language, app)
             elif platform == 'windowsphone' or platform == 'windows8':
                 return generate.WindowsPhone().download_files(language, app)
-            elif platform == 'ios':
+            elif platform == 'ios' or platform == 'osx':
                 return generate.iOS().download_files(language, app)
         else:
             return render_to_response('login.html', {'form': form},
