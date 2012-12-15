@@ -3,13 +3,13 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'app.views.MainPageHandler'),
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^register/$', 'app.views.TranslatorRegistration'),
-    url(r'^login/$', 'app.views.LoginRequest'),
-    url(r'^logout/$', 'app.views.LogoutRequest'),
-    url(r'^profile/$', 'app.views.ProfileHandler'),
-    url(r'^translate/$', 'app.views.TranslationHandler'),
-    url(r'^modify/$', 'app.views.ModifyStringsHandler'),
-    url(r'^generate/$', 'app.views.GenerateHandler'),
+    url(r'^i18n/$', 'app.views.MainPageHandler'),
+    url(r'^i18n/admin/', include(admin.site.urls)),
+    url(r'^i18n/register/$', 'app.views.TranslatorRegistration'),
+    url(r'^i18n/login/$', 'app.views.LoginRequest'),
+    url(r'^i18n/logout/$', 'app.views.LogoutRequest'),
+    url(r'^i18n/profile/$', 'app.views.ProfileHandler'),
+    url(r'^i18n/translate/$', 'app.views.TranslationHandler'),
+    url(r'^i18n/modify/$', 'app.views.ModifyStringsHandler'),
+    url(r'^i18n/generate/$', 'app.views.GenerateHandler'),
 )
