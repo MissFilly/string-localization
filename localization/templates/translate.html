@@ -5,36 +5,37 @@
 {% load custom_tags %}
 <h1>Translate</h1>
 {% if strings %}
-	<form action="" method="post">
-		{% csrf_token %}
-		{% for string in strings %}
-		<div class="string">
-			<p>Text: {{ string.text }} ({{ string.text|count_words }} words)</p>
-			{% if string.description %}
-			<p>Description: {{ string.description }}</p>
-			{% endif %}
-			<p><label for="{{ string.id }}">Translation:</label></p>
-			<p><textarea name="{{ string.id }}" id="{{ string.id }}"></textarea></p>
-		</div>
-		{% endfor %}
-		<input type="submit" value="Save" />
-	</form>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for string in strings %}
+        <div class="string">
+            <p>Text: {{ string.text }} ({{ string.text|count_words }} words)</p>
+            {% if string.description %}
+            <p>Description: {{ string.description }}</p>
+            {% endif %}
+            <p><label for="{{ string.id }}">Translation:</label></p>
+            <p><textarea name="{{ string.id }}" id="{{ string.id }}"></textarea></p>
+        </div>
+        {% endfor %}
+        <input type="submit" value="Save" />
+    </form>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if strings.has_previous %}
+                <a href="?page={{ strings.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ strings.number }} of {{ strings.paginator.num_pages }}
+            </span>
+
+            {% if strings.has_next %}
+                <a href="?page={{ strings.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
 {% else %}
-	<p>You have no more strings to translate.</p>
+    <p>You have no more strings to translate.</p>
 {% endif %}
-	<div class="pagination">
-	    <span class="step-links">
-	        {% if strings.has_previous %}
-	            <a href="?page={{ strings.previous_page_number }}">Previous</a>
-	        {% endif %}
-	
-	        <span class="current">
-	            Page {{ strings.number }} of {{ strings.paginator.num_pages }}
-	        </span>
-	
-	        {% if strings.has_next %}
-	            <a href="?page={{ strings.next_page_number }}">next</a>
-	        {% endif %}
-	    </span>
-	</div>
 {% endblock %}
