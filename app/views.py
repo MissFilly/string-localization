@@ -135,7 +135,6 @@ def TranslationHandler(request):
 
                 # The translated string must be created
                 except String.DoesNotExist:
-                    print(original)
                     string = String(language=translator.language,
                                     translator=request.user.get_profile(),
                                     text=request.POST.get(key),
