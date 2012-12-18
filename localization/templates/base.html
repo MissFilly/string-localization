@@ -14,13 +14,13 @@
 			
 				<ul id="nav">
 					{% if user.is_authenticated %}
-						<li><a href="/translate/">Translate</a></li>
-						<li><a href="/modify/">Work done</a></li>
-						<li><a href="/notes/">Notes</a></li>
-						<li><a href="/logout/">Logout</a></li>
+						<li><a href="/i18n/translate/">Translate</a></li>
+						<li><a href="/i18n/modify/">Work done</a></li>
+						<li><a href="/i18n/notes/">Notes</a></li>
+						<li><a href="/i18n/logout/">Logout</a></li>
 					{% else %}
-						<li><a href="/register/">Register</a></li>
-						<li><a href="/login/">Login</a></li>
+						<li><a href="/i18n/register/">Register</a></li>
+						<li><a href="/i18n/login/">Login</a></li>
 					{% endif %}
 				</ul>
 			</div>

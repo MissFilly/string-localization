@@ -25,7 +25,12 @@ def MainPageHandler(request):
 
 def TranslatorRegistration(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/profile')
+        try:
+            translator = request.user.get_profile()
+            return HttpResponseRedirect('/i18n/profile/')
+        except Translator.DoesNotExist:
+            return render_to_response('no_translator_profile.html',
+                                      context_instance=RequestContext(request))
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -55,7 +60,12 @@ def TranslatorRegistration(request):
 
 def LoginRequest(request):
     if request.user.is_authenticated():
-        return HttpResponseRedirect('/profile/')
+        try:
+            translator = request.user.get_profile()
+            return HttpResponseRedirect('/i18n/profile/')
+        except Translator.DoesNotExist:
+            return render_to_response('no_translator_profile.html',
+                                      context_instance=RequestContext(request))
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -64,7 +74,7 @@ def LoginRequest(request):
             translator = authenticate(username=username, password=password)
             if translator is not None:
                 login(request, translator)
-                return HttpResponseRedirect('/profile/')
+                return HttpResponseRedirect('/i18n/profile/')
             else:
                 return render_to_response('login.html', {'form': form},
                                       context_instance=RequestContext(request))
@@ -87,7 +97,7 @@ def LogoutRequest(request):
 @login_required
 def ProfileHandler(request):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
+        return HttpResponseRedirect('/i18n/login/')
     translator = request.user.get_profile
     context = {'translator': translator}
     return render_to_response('profile.html', context,
@@ -98,9 +108,10 @@ def ProfileHandler(request):
 def TranslationHandler(request):
     try:
         translator = request.user.get_profile()
-        strings_list = extra_funcs.strings_to_translate(request)
     except Translator.DoesNotExist:
-        return HttpResponseRedirect('/login/')
+        return render_to_response('no_translator_profile.html',
+                                  context_instance=RequestContext(request))
+    strings_list = extra_funcs.strings_to_translate(request)
     if request.method == 'POST':
         keys = request.POST.keys()
         keys.remove('csrfmiddlewaretoken')
@@ -125,7 +136,6 @@ def TranslationHandler(request):
 
                 # The translated string must be created
                 except String.DoesNotExist:
-                    print(original)
                     string = String(language=translator.language,
                                     translator=request.user.get_profile(),
                                     text=request.POST.get(key),
@@ -134,7 +144,7 @@ def TranslationHandler(request):
                 words_count += len(original.text.split())
         translator.words_translated += words_count
         translator.save()
-        return HttpResponseRedirect('/translate/')
+        return HttpResponseRedirect('/i18n/translate/')
 
     else:
         paginator = Paginator(strings_list, 2)  # Show 15 strings per page
@@ -153,7 +163,11 @@ def TranslationHandler(request):
 
 @login_required
 def ModifyStringsHandler(request):
-    translator = request.user.get_profile
+    try:
+        translator = request.user.get_profile()
+    except Translator.DoesNotExist:
+        return render_to_response('no_translator_profile.html',
+                                  context_instance=RequestContext(request))
     if request.method == 'POST':
         keys = request.POST.keys()
         keys.remove('csrfmiddlewaretoken')
@@ -171,10 +185,8 @@ def ModifyStringsHandler(request):
                         )
                 except String.DoesNotExist:
                     return HttpResponse('There was an error!')
-            else:
-                print("Not replaced: " + key)
         CURRENT_VALUES = {}
-        return HttpResponseRedirect('/modify/')
+        return HttpResponseRedirect('/i18n/modify/')
     else:
         strings_list = String.objects.filter(translator=translator,
                                              frozen=False)
@@ -203,7 +215,7 @@ def GenerateHandler(request):
             platform = app.platform.replace(' ', '').lower()
             if platform == 'android':
                 return generate.Android().download_files(language, app)
-            elif platform == 'windowsphone':
+            elif platform == 'windowsphone' or platform == 'windows8':
                 return generate.WindowsPhone().download_files(language, app)
             elif platform == 'ios' or platform == 'osx':
                 return generate.iOS().download_files(language, app)
@@ -214,4 +226,4 @@ def GenerateHandler(request):
         form = GenerateForm()
         context = {'form': form}
         return render_to_response('generate.html', context,
-                                      context_instance=RequestContext(request))
+                                  context_instance=RequestContext(request))

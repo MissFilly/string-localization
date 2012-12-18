@@ -3,40 +3,41 @@
 {% load custom_tags %}
 <h1>Modify strings</h1>
 {% if strings %}
-	<form action="" method="post">
-		{% csrf_token %}
-		{% for string in strings %}
-		<div class="string">
-			<p><span class="strong">Original text:</span> {{ string.original_string.text }} ({{ string.original_string.text|count_words }} word{% if string.original_string.text|plural %}s{% endif %})</p>
-			{% if string.description %}
-			<button onclick="getElementsByName(this.id)[0].disabled = false">Modify</button>
-			<p><span class="strong">Description:</span> {{ string.original_string.description }}</p>
-			{% endif %}
-			<p>
-				<label for="{{ string.id }}"><span class="strong top">Your translation:</span></label>
-				<textarea disabled="disabled" name="{{ string.id }}" id="{{ string.id }}">{{ string.text }}</textarea>
-			</p>
-		</div>
-		{% endfor %}
-		<input type="submit" value="Save" />
-	</form>
+    <form action="" method="post">
+        {% csrf_token %}
+        {% for string in strings %}
+        <div class="string">
+            <p><span class="strong">Original text:</span> {{ string.original_string.text }} ({{ string.original_string.text|count_words }} word{% if string.original_string.text|plural %}s{% endif %})</p>
+            <button onclick="getElementsByName(this.id)[0].disabled = false">Modify</button>
+            {% if string.description %}
+            <p><span class="strong">Description:</span> {{ string.original_string.description }}</p>
+            {% endif %}
+            <p>
+                <label for="{{ string.id }}"><span class="strong top">Your translation:</span></label>
+                <textarea disabled="disabled" name="{{ string.id }}" id="{{ string.id }}">{{ string.text }}</textarea>
+            </p>
+        </div>
+        {% endfor %}
+        <input type="submit" value="Save" />
+    </form>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if strings.has_previous %}
+                <a href="?page={{ strings.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ strings.number }} of {{ strings.paginator.num_pages }}
+            </span>
+
+            {% if strings.has_next %}
+                <a href="?page={{ strings.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
 {% else %}
-	<p>You haven't made any translations yet.</p>
+    <p>You haven't made any translations yet.</p>
 {% endif %}
-	<div class="pagination">
-	    <span class="step-links">
-	        {% if strings.has_previous %}
-	            <a href="?page={{ strings.previous_page_number }}">Previous</a>
-	        {% endif %}
-	
-	        <span class="current">
-	            Page {{ strings.number }} of {{ strings.paginator.num_pages }}
-	        </span>
-	
-	        {% if strings.has_next %}
-	            <a href="?page={{ strings.next_page_number }}">next</a>
-	        {% endif %}
-	    </span>
-	</div>
 {% endblock %}
 

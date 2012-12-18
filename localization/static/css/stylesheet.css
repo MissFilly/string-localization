@@ -2,29 +2,29 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{border:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}table{border-collapse:collapse;border-spacing:0}
 
 body {
-	background: url("../img/debut_dark.png") repeat scroll 0 0 transparent;
-	color: white;
-	font-family: 'Verdana', sans-serif;
+    background: url("../img/debut_dark.png") repeat scroll 0 0 transparent;
+    color: white;
+    font-family: 'Verdana', sans-serif;
 }
 
 #header {
-	border-bottom: 2px dashed white;
-	height: 110px;
+    border-bottom: 2px dashed white;
+    height: 110px;
 }
 
 #header-wraper {
-	margin: auto;
-	width: 60%;
+    margin: auto;
+    width: 60%;
 }
 
 #header-wraper p {
-	margin-top: 6%;
-	font-family: 'Anaheim', sans-serif;
+    margin-top: 6%;
+    font-family: 'Anaheim', sans-serif;
 }
 
 .main-title {
-	font-size: 55px;
-	text-shadow: 5px 5px 3px black;
+    font-size: 55px;
+    text-shadow: 5px 5px 3px black;
 }
 
 .main-subtitle {
@@ -33,8 +33,8 @@ body {
 }
 
 #nav {
-	float: right;
-	margin-top: 26px;
+    float: right;
+    margin-top: 26px;
 }
 
 #nav li {
@@ -42,7 +42,7 @@ body {
 }
 
 #nav a {
-    background: none repeat scroll 0 0 maroon;
+    background: none repeat scroll 0 0 #700F0F;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     color: white;
@@ -54,7 +54,7 @@ body {
 }
 
 #nav a:hover {
-	background-color: #232323;
+    background-color: #232323;
 }
 
 #frame {
@@ -64,12 +64,28 @@ body {
 }
 
 #content {
-	padding: 50px 70px;
+    padding: 50px 70px;
+}
+
+#content > p {
+    margin-bottom: 23px;
 }
 
 h1 {
-	font-size: 24px;
-	margin-bottom: 40px;
+    border-bottom: 1px solid white;
+    font-size: 24px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #979797;
+}
+
+a:hover {
+    background-color: #700F0F;
+    color: white;
 }
 
 .string {
@@ -80,13 +96,13 @@ h1 {
 }
 
 .string p {
-	margin-bottom: 18px;
+    margin-bottom: 18px;
 }
 
 .strong {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .top {
-	vertical-align: top;
+    vertical-align: top;
 }
