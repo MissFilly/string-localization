@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from app.forms import RegistrationForm, GenerateForm
+from app.forms import LoginForm, GenerateForm  # , RegistrationForm
 from app.models import Translator, String
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
 from localization.utils import extra_funcs
 from generator import generate
@@ -23,42 +22,7 @@ def MainPageHandler(request):
                               context_instance=RequestContext(request))
 
 
-def TranslatorRegistration(request):
-    if request.user.is_authenticated():
-        try:
-            translator = request.user.get_profile()
-            return HttpResponseRedirect('/i18n/profile/')
-        except Translator.DoesNotExist:
-            return render_to_response('no_translator_profile.html',
-                                      context_instance=RequestContext(request))
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = User.objects.create_user(
-                                       username=form.cleaned_data['username'],
-                                       email=form.cleaned_data['email'],
-                                       password=form.cleaned_data['password']
-                                       )
-            user.first_name = form.cleaned_data['first_name']
-            user.last_name = form.cleaned_data['last_name']
-            user.save()
-            translator = Translator(user=user,
-                                    language=form.cleaned_data['language'],
-                                    words_translated=0)
-            translator.save()
-            return HttpResponseRedirect('/profile/')
-        else:
-            return render_to_response('register.html', {'form': form},
-                                      context_instance=RequestContext(request))
-    else:
-        ''' User is not submitting the form, show the blank form '''
-        form = RegistrationForm()
-        context = {'form': form}
-        return render_to_response('register.html', context,
-                                  context_instance=RequestContext(request))
-
-
-#def LoginRequest(request):
+#def TranslatorRegistration(request):
     #if request.user.is_authenticated():
         #try:
             #translator = request.user.get_profile()
@@ -67,26 +31,61 @@ def TranslatorRegistration(request):
             #return render_to_response('no_translator_profile.html',
                                       #context_instance=RequestContext(request))
     #if request.method == 'POST':
-        #form = LoginForm(request.POST)
+        #form = RegistrationForm(request.POST)
         #if form.is_valid():
-            #username = form.cleaned_data['username']
-            #password = form.cleaned_data['password']
-            #translator = authenticate(username=username, password=password)
-            #if translator is not None:
-                #login(request, translator)
-                #return HttpResponseRedirect('/i18n/profile/')
-            #else:
-                #return render_to_response('login.html', {'form': form},
-                                      #context_instance=RequestContext(request))
+            #user = User.objects.create_user(
+                                       #username=form.cleaned_data['username'],
+                                       #email=form.cleaned_data['email'],
+                                       #password=form.cleaned_data['password']
+                                       #)
+            #user.first_name = form.cleaned_data['first_name']
+            #user.last_name = form.cleaned_data['last_name']
+            #user.save()
+            #translator = Translator(user=user,
+                                    #language=form.cleaned_data['language'],
+                                    #words_translated=0)
+            #translator.save()
+            #return HttpResponseRedirect('/profile/')
         #else:
-            #return render_to_response('login.html', {'form': form},
+            #return render_to_response('register.html', {'form': form},
                                       #context_instance=RequestContext(request))
     #else:
-        #''' User is not submitting the form, show the login form '''
-        #form = LoginForm()
-        #context = {'form': form, 'user': request.user}
-        #return render_to_response('login.html', context,
+        #''' User is not submitting the form, show the blank form '''
+        #form = RegistrationForm()
+        #context = {'form': form}
+        #return render_to_response('register.html', context,
                                   #context_instance=RequestContext(request))
+
+
+def LoginRequest(request):
+    if request.user.is_authenticated():
+        try:
+            translator = request.user.get_profile()
+            return HttpResponseRedirect('/i18n/profile/')
+        except Translator.DoesNotExist:
+            return render_to_response('no_translator_profile.html',
+                                      context_instance=RequestContext(request))
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            translator = authenticate(username=username, password=password)
+            if translator is not None:
+                login(request, translator)
+                return HttpResponseRedirect('/i18n/profile/')
+            else:
+                return render_to_response('login.html', {'form': form},
+                                      context_instance=RequestContext(request))
+        else:
+            return render_to_response('login.html', {'form': form},
+                                      context_instance=RequestContext(request))
+    else:
+        ''' User is not submitting the form, show the login form '''
+        form = LoginForm()
+        context = {'form': form, 'user': request.user}
+        return render_to_response('login.html', context,
+                                  context_instance=RequestContext(request))
 
 
 def LogoutRequest(request):
