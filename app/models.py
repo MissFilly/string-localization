@@ -12,6 +12,7 @@ class Language(models.Model):
 
     class Meta:
         ordering = ['name']
+        unique_together = ('iso_639', 'iso_3166',)
 
     def __unicode__(self):
         return u'%s (%s-%s)' % (self.name, self.iso_639, self.iso_3166)
@@ -37,11 +38,15 @@ class Translator(models.Model):
         return '%s - %s' % (self.user.username, self.language.name)
 
 
+def get_english():
+    return Language.objects.get(name='English')
+
+
 class String(models.Model):
     app = models.ManyToManyField(App, null=True, blank=True)
     text = models.TextField()
     description = models.TextField(null=True, blank=True)
-    language = models.ForeignKey(Language)
+    language = models.ForeignKey(Language, default=get_english)
     android_name_string = models.CharField(max_length=30, null=True, blank=True)
     ios_name_string = models.CharField(max_length=30, null=True, blank=True)
     wp_name_string = models.CharField(max_length=30, null=True, blank=True)
