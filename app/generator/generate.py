@@ -132,7 +132,7 @@ class WindowsPhone():
 class iOS():
 
     def generate_file(self, lang, app):
-        content = u""
+        content = u''
         if lang.name == 'English':
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
@@ -164,6 +164,49 @@ class iOS():
                                   self.generate_file(l, app))
             else:
                 zip_file.writestr('%s.lproj/Localizable.strings' % l.iso_639,
+                                  self.generate_file(l, app))
+
+        # Fix for Linux zip files read in Windows
+        for file in zip_file.filelist:
+            file.create_system = 0
+
+        zip_file.close()
+
+        response = HttpResponse(mimetype='application/zip')
+        response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
+                                          (app.__unicode__().replace(' ', '-'))
+        response['Content-Length'] = in_memory.tell
+
+        in_memory.seek(0)
+        response.write(in_memory.read())
+        return response
+
+
+class Web():
+
+    def generate_file(self, lang, app):
+        content = u'# -*- coding: utf-8 -*-\n' + \
+                  u'class String\n' + \
+                  u'def t_' + lang.iso_639 + '\n' \
+                  u'case self\n'
+
+        strings = String.objects.filter(enabled=True, language=lang,
+                                        original_string__app=app)
+        for string in strings:
+            content += u'when "%s": return "%s"\n' % (string.original_string.text,
+                                                      string.text)
+        content += '\nelse return self\nend\end\end'
+        return content
+
+    def download_files(self, langs, app):
+        in_memory = StringIO()
+
+        zip_file = ZipFile(in_memory, 'a')
+        for l in langs:
+            if l.name == 'English':
+                pass
+            else:
+                zip_file.writestr('%s.rb' % l.iso_639,
                                   self.generate_file(l, app))
 
         # Fix for Linux zip files read in Windows

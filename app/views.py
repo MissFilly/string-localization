@@ -219,8 +219,10 @@ def GenerateHandler(request):
                 return generate.WindowsPhone().download_files(language, app)
             elif platform == 'ios' or platform == 'osx':
                 return generate.iOS().download_files(language, app)
+            elif platform == 'web':
+                return generate.Web().download_files(language, app)
         else:
-            return render_to_response('login.html', {'form': form},
+            return render_to_response('/i18n/generate', {'form': form},
                                       context_instance=RequestContext(request))
     else:
         form = GenerateForm()
