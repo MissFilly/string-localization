@@ -7,9 +7,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from app.forms import RegistrationForm, LoginForm, GenerateForm
+from app.forms import RegistrationForm, GenerateForm
 from app.models import Translator, String
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from datetime import datetime
 from localization.utils import extra_funcs
 from generator import generate
@@ -58,35 +58,35 @@ def TranslatorRegistration(request):
                                   context_instance=RequestContext(request))
 
 
-def LoginRequest(request):
-    if request.user.is_authenticated():
-        try:
-            translator = request.user.get_profile()
-            return HttpResponseRedirect('/i18n/profile/')
-        except Translator.DoesNotExist:
-            return render_to_response('no_translator_profile.html',
-                                      context_instance=RequestContext(request))
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            translator = authenticate(username=username, password=password)
-            if translator is not None:
-                login(request, translator)
-                return HttpResponseRedirect('/i18n/profile/')
-            else:
-                return render_to_response('login.html', {'form': form},
-                                      context_instance=RequestContext(request))
-        else:
-            return render_to_response('login.html', {'form': form},
-                                      context_instance=RequestContext(request))
-    else:
-        ''' User is not submitting the form, show the login form '''
-        form = LoginForm()
-        context = {'form': form, 'user': request.user}
-        return render_to_response('login.html', context,
-                                  context_instance=RequestContext(request))
+#def LoginRequest(request):
+    #if request.user.is_authenticated():
+        #try:
+            #translator = request.user.get_profile()
+            #return HttpResponseRedirect('/i18n/profile/')
+        #except Translator.DoesNotExist:
+            #return render_to_response('no_translator_profile.html',
+                                      #context_instance=RequestContext(request))
+    #if request.method == 'POST':
+        #form = LoginForm(request.POST)
+        #if form.is_valid():
+            #username = form.cleaned_data['username']
+            #password = form.cleaned_data['password']
+            #translator = authenticate(username=username, password=password)
+            #if translator is not None:
+                #login(request, translator)
+                #return HttpResponseRedirect('/i18n/profile/')
+            #else:
+                #return render_to_response('login.html', {'form': form},
+                                      #context_instance=RequestContext(request))
+        #else:
+            #return render_to_response('login.html', {'form': form},
+                                      #context_instance=RequestContext(request))
+    #else:
+        #''' User is not submitting the form, show the login form '''
+        #form = LoginForm()
+        #context = {'form': form, 'user': request.user}
+        #return render_to_response('login.html', context,
+                                  #context_instance=RequestContext(request))
 
 
 def LogoutRequest(request):
@@ -137,6 +137,7 @@ def TranslationHandler(request):
                 # The translated string must be created
                 except String.DoesNotExist:
                     string = String(language=translator.language,
+                                    last_modif=datetime.now(),
                                     translator=request.user.get_profile(),
                                     text=request.POST.get(key),
                                     original_string=original)

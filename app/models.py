@@ -11,7 +11,7 @@ class Language(models.Model):
     iso_3166 = models.CharField(max_length=2, verbose_name='Subculture code')
 
     class Meta:
-        ordering = ["name"]
+        ordering = ['name']
 
     def __unicode__(self):
         return u'%s (%s-%s)' % (self.name, self.iso_639, self.iso_3166)
@@ -20,6 +20,9 @@ class Language(models.Model):
 class App(models.Model):
     name = models.CharField(max_length=30)
     platform = models.CharField(max_length=20)
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return u'%s for %s' % (self.name, self.platform)

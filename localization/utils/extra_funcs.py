@@ -4,18 +4,18 @@ from app.models import String
 def strings_to_translate(request):
 
     ''' This function returns the list of strings that need to be translated '''
-    translator = request.user.get_profile()
+    translator_lang = request.user.get_profile().language
     translatable_strings = String.objects.filter(translatable=True,
                                                  language__name="English",
                                                  enabled=True)
-    translated_strings = String.objects.filter(language=translator.language,
+    translated_strings = String.objects.filter(language=translator_lang,
                                                original_string__enabled=True)
     strings = []  # List of strings that need to be translated
 
     # Strings that are translatable and don't have a translation for the
     # translator's language
     for string in translatable_strings:
-        if not String.objects.filter(language=translator.language,
+        if not String.objects.filter(language=translator_lang,
                                      original_string=string).exists():
             strings.append(string)
 
@@ -23,6 +23,7 @@ def strings_to_translate(request):
     for string in translated_strings:
         if string.last_modif < string.original_string.last_modif:
             strings.append(string.original_string)
+
     return strings
 
 

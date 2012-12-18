@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Moonlighting S.A.</title>
-		<meta charset="UTF-8" />
-		<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/stylesheet.css" />
-		<link href='http://fonts.googleapis.com/css?family=Anaheim' rel='stylesheet' type='text/css'>
-		{% block extrahead %}{% endblock %}
-	</head>
-	<body>
-		<div id="header">
-			<div id="header-wraper">
-				<p><span class="main-title">Moonlighting S.A.</span> <span class="main-subtitle">Translations</span></p>
-			
-				<ul id="nav">
-					{% if user.is_authenticated %}
-						<li><a href="/i18n/translate/">Translate</a></li>
-						<li><a href="/i18n/modify/">Work done</a></li>
-						<li><a href="/i18n/notes/">Notes</a></li>
-						<li><a href="/i18n/logout/">Logout</a></li>
-					{% else %}
-						<li><a href="/i18n/register/">Register</a></li>
-						<li><a href="/i18n/login/">Login</a></li>
-					{% endif %}
-				</ul>
-			</div>
-		</div>
-		<div id="frame">
-			<div id="content">
-				{% block content %}{% endblock %}
-			</div>
-		</div>
-	</body>
+    <head>
+        <title>Moonlighting S.A.</title>
+        <meta charset="UTF-8" />
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/stylesheet.css" />
+        <link href='http://fonts.googleapis.com/css?family=Anaheim' rel='stylesheet' type='text/css'>
+        {% block extrahead %}{% endblock %}
+    </head>
+    <body>
+        <div id="header">
+            <div id="header-wraper">
+                <p><span class="main-title">Moonlighting S.A.</span> <span class="main-subtitle">Translations</span></p>
+
+                <ul id="nav">
+                    {% if user.is_authenticated %}
+                        <li><a href="/i18n/translate/">Translate</a></li>
+                        <li><a href="/i18n/modify/">Work done</a></li>
+                        <li><a href="/i18n/notes/">Notes</a></li>
+                        <li><a href="/i18n/logout/">Logout</a></li>
+                    {% else %}
+<!--
+                        <li><a href="/i18n/register/">Register</a></li>
+-->
+                        <li><a href="/i18n/login/">Login</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div id="frame">
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </body>
 </html>
