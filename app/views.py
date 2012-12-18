@@ -11,7 +11,8 @@ from app.forms import RegistrationForm, LoginForm, GenerateForm
 from app.models import Translator, String
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
-from localization.utils import extra_funcs, generate
+from localization.utils import extra_funcs
+from generator import generate
 
 CURRENT_VALUES = {}
 
