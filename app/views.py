@@ -6,7 +6,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from app.forms import LoginForm, GenerateForm  # , RegistrationForm
+from django.forms.models import modelformset_factory
+from app.forms import LoginForm, GenerateForm, ModifyForm  # , RegistrationForm
 from app.models import Translator, String
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
@@ -104,6 +105,33 @@ def ProfileHandler(request):
 
 
 @login_required
+def ModifyStringsHandler(request):
+    try:
+        translator = request.user.get_profile()
+    except Translator.DoesNotExist:
+        return render_to_response('no_translator_profile.html',
+                                  context_instance=RequestContext(request))
+    if request.method == 'POST':
+        pass
+    else:
+        TranslatedFormSet = modelformset_factory(String, form=ModifyForm)
+        query = String.objects.filter(translator=translator, frozen=False)
+        formset = TranslatedFormSet(queryset=query)
+        import pdb; pdb.set_trace()
+        paginator = Paginator(formset, 15)  # Show 15 strings per page
+        page = request.GET.get('page')
+        try:
+            strings = paginator.page(page)
+        except PageNotAnInteger:
+            strings = paginator.page(1)
+        except EmptyPage:
+            strings = paginator.page(paginator.num_pages)
+        context = {'strings': strings, 'formset': formset}
+        return render_to_response('modify.html', context,
+                                  context_instance=RequestContext(request))
+
+
+@login_required
 def TranslationHandler(request):
     try:
         translator = request.user.get_profile()
@@ -161,48 +189,48 @@ def TranslationHandler(request):
                                   context_instance=RequestContext(request))
 
 
-@login_required
-def ModifyStringsHandler(request):
-    try:
-        translator = request.user.get_profile()
-    except Translator.DoesNotExist:
-        return render_to_response('no_translator_profile.html',
-                                  context_instance=RequestContext(request))
-    if request.method == 'POST':
-        keys = request.POST.keys()
-        keys.remove('csrfmiddlewaretoken')
-        global CURRENT_VALUES
-        for key in keys:
-            if request.POST.get(key) and request.POST.get(key) != \
-               CURRENT_VALUES[int(key)]:
-                try:
-                    String.objects.filter(
-                        translator=translator,
-                        id=int(key),
-                        frozen=False
-                        ).update(
-                        text=request.POST.get(key)
-                        )
-                except String.DoesNotExist:
-                    return HttpResponse('There was an error!')
-        CURRENT_VALUES = {}
-        return HttpResponseRedirect('/i18n/modify/')
-    else:
-        strings_list = String.objects.filter(translator=translator,
-                                             frozen=False)
-        paginator = Paginator(strings_list, 2)  # Show 15 strings per page
-        page = request.GET.get('page')
-        try:
-            strings = paginator.page(page)
-        except PageNotAnInteger:
-            strings = paginator.page(1)
-        except EmptyPage:
-            strings = paginator.page(paginator.num_pages)
-        global CURRENT_VALUES
-        CURRENT_VALUES = extra_funcs.save_current_values(strings_list)
-        context = {'strings': strings}
-        return render_to_response('modify.html', context,
-                                  context_instance=RequestContext(request))
+#@login_required
+#def ModifyStringsHandler(request):
+    #try:
+        #translator = request.user.get_profile()
+    #except Translator.DoesNotExist:
+        #return render_to_response('no_translator_profile.html',
+                                  #context_instance=RequestContext(request))
+    #if request.method == 'POST':
+        #keys = request.POST.keys()
+        #keys.remove('csrfmiddlewaretoken')
+        #global CURRENT_VALUES
+        #for key in keys:
+            #if request.POST.get(key) and request.POST.get(key) != \
+               #CURRENT_VALUES[int(key)]:
+                #try:
+                    #String.objects.filter(
+                        #translator=translator,
+                        #id=int(key),
+                        #frozen=False
+                        #).update(
+                        #text=request.POST.get(key)
+                        #)
+                #except String.DoesNotExist:
+                    #return HttpResponse('There was an error!')
+        #CURRENT_VALUES = {}
+        #return HttpResponseRedirect('/i18n/modify/')
+    #else:
+        #strings_list = String.objects.filter(translator=translator,
+                                             #frozen=False)
+        #paginator = Paginator(strings_list, 2)  # Show 15 strings per page
+        #page = request.GET.get('page')
+        #try:
+            #strings = paginator.page(page)
+        #except PageNotAnInteger:
+            #strings = paginator.page(1)
+        #except EmptyPage:
+            #strings = paginator.page(paginator.num_pages)
+        #global CURRENT_VALUES
+        #CURRENT_VALUES = extra_funcs.save_current_values(strings_list)
+        #context = {'strings': strings}
+        #return render_to_response('modify.html', context,
+                                  #context_instance=RequestContext(request))
 
 
 @staff_member_required

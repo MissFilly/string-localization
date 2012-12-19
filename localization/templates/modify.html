@@ -5,19 +5,12 @@
 {% if strings %}
     <form action="" method="post">
         {% csrf_token %}
-        {% for string in strings %}
+        {% for form in formset %}
         <div class="string">
-            <p><span class="strong">Original text:</span> {{ string.original_string.text }} ({{ string.original_string.text|count_words }} word{% if string.original_string.text|plural %}s{% endif %})</p>
-            <button onclick="getElementsByName(this.id)[0].disabled = false">Modify</button>
-            {% if string.description %}
-            <p><span class="strong">Description:</span> {{ string.original_string.description }}</p>
-            {% endif %}
-            <p>
-                <label for="{{ string.id }}"><span class="strong top">Your translation:</span></label>
-                <textarea disabled="disabled" name="{{ string.id }}" id="{{ string.id }}">{{ string.text }}</textarea>
-            </p>
+            <p><span>Original text: </span>{{ form.instance.original_string.text }} ({{ string.instance.original_string.text|count_words }} word{% if string.instance.original_string.text|plural %}s{% endif %})</p>
+            {{ form.as_p }}
+            {% endfor %}
         </div>
-        {% endfor %}
         <input type="submit" value="Save" />
     </form>
 

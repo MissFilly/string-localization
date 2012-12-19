@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import ModelForm
-from app.models import Translator, App, Language
+from app.models import Translator, App, Language, String
 
 
 class RegistrationForm(ModelForm):
@@ -45,3 +45,11 @@ class GenerateForm(forms.Form):
     app = forms.ModelChoiceField(queryset=App.objects.all())
     language = forms.ModelMultipleChoiceField(queryset=Language.objects.all(),
                                          widget=forms.CheckboxSelectMultiple())
+
+
+class ModifyForm(ModelForm):
+    text = forms.CharField(label=(u'Translation'), widget=forms.Textarea)
+
+    class Meta:
+        model = String
+        fields = ('text',)

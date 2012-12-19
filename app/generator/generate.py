@@ -186,17 +186,17 @@ class Web():
 
     def generate_file(self, lang, app):
         content = u'# -*- coding: utf-8 -*-\n' + \
-                  u'class String\n' + \
-                  u'def t_' + lang.iso_639 + '\n' \
-                  u'case self\n'
+                  'class String\n' + \
+                  'def t_' + lang.iso_639 + '\n' \
+                  'case self\n'
 
         strings = String.objects.filter(enabled=True, language=lang,
                                         original_string__app=app)
         for string in strings:
-            content += u'when "%s": return "%s"\n' % (string.original_string.text,
+            content += 'when "%s": return "%s"\n' % (string.original_string.text,
                                                       string.text)
-        content += '\nelse return self\nend\end\end'
-        return content
+        content += '\nelse return self' + '\nend'*3
+        return content.encode('utf-8')
 
     def download_files(self, langs, app):
         in_memory = StringIO()
