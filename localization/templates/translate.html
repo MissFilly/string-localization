@@ -7,14 +7,11 @@
 {% if strings %}
     <form action="" method="post">
         {% csrf_token %}
-        {% for string in strings %}
+        {{ formset.management_form }}
+        {% for form in formset %}
         <div class="string">
-            <p>Text: {{ string.text }} ({{ string.text|count_words }} words)</p>
-            {% if string.description %}
-            <p>Description: {{ string.description }}</p>
-            {% endif %}
-            <p><label for="{{ string.id }}">Translation:</label></p>
-            <p><textarea name="{{ string.id }}" id="{{ string.id }}"></textarea></p>
+            <p><span>Original text: </span>{{ form.instance.text }} ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %})</p>
+            {{ form.as_p }}
         </div>
         {% endfor %}
         <input type="submit" value="Save" />

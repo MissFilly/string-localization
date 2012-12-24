@@ -6,8 +6,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.forms.models import modelformset_factory
-from app.forms import LoginForm, GenerateForm, ModifyForm  # , RegistrationForm
+from django.forms.models import modelformset_factory, formset_factory
+from django.db.models import Q, F
+from app.forms import LoginForm, GenerateForm, ModifyForm, TranslateForm  # , RegistrationForm
 from app.models import Translator, String
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
@@ -139,44 +140,39 @@ def TranslationHandler(request):
     except Translator.DoesNotExist:
         return render_to_response('no_translator_profile.html',
                                   context_instance=RequestContext(request))
-    strings_list = extra_funcs.strings_to_translate(request)
+    # This query retrieves string in English that either have a translation
+    # that is outdated or have no translation (in the translator's language)
+    query = String.objects.filter((Q(string__language=translator.language,
+                                  string__last_modif__lt=F('last_modif')) |
+                                  ~Q(string__language=translator.language)),
+                                  enabled=True, translatable=True)
+    ToTranslateFormSet = modelformset_factory(String, form=TranslateForm, extra=0)
     if request.method == 'POST':
-        keys = request.POST.keys()
-        keys.remove('csrfmiddlewaretoken')
         words_count = 0
-
-        for key in keys:
-            if request.POST.get(key):  # Translation field in form is not empty
-                original = String.objects.get(id=int(key))
-                # The string already has a translation, it must be updated
-                try:
-                    string = String.objects.get(language=translator.language,
-                                                original_string=original)
-                    if string in strings_list:
-                        string.text = request.POST.get(key)
-                        string.last_modif = datetime.now()
-                        string.translator = request.user.get_profile()
-                        string.save()
-                    else:
-                        # The user is trying to submit again translation that
-                        # have already been made
-                        return HttpResponse('Not allowed!')
-
-                # The translated string must be created
-                except String.DoesNotExist:
-                    string = String(language=translator.language,
-                                    last_modif=datetime.now(),
-                                    translator=request.user.get_profile(),
-                                    text=request.POST.get(key),
-                                    original_string=original)
+        formset = ToTranslateFormSet(request.POST, request.FILES)
+        for form in formset:
+            if form.instance in query and form.is_valid():
+                translation = form.cleaned_data['translation']
+                string, created = String.objects.get_or_create(
+                                              language=translator.language,
+                                              original_string=form.instance
+                                              )
+                if created:
+                    string.text = translation
+                    string.translator = translator
                     string.save()
-                words_count += len(original.text.split())
-        translator.words_translated += words_count
-        translator.save()
+                else:
+                    String.objects.filter(id=string.id).update(
+                                              text=translation,
+                                              translator=translator,
+                                              last_modif=datetime.now())
+                words_count += len(form.instance.text.split())
+            else:
+                return HttpResponse('Either the form wasn\'t valid or you tried to sum up some strings')
         return HttpResponseRedirect('/i18n/translate/')
-
     else:
-        paginator = Paginator(strings_list, 2)  # Show 15 strings per page
+        formset = ToTranslateFormSet(queryset=query, form=TranslateForm, extra=0)
+        paginator = Paginator(formset, 15)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
@@ -184,10 +180,68 @@ def TranslationHandler(request):
             strings = paginator.page(1)
         except EmptyPage:
             strings = paginator.page(paginator.num_pages)
-
-        context = {'strings': strings}
+        context = {'strings': strings, 'formset': formset}
         return render_to_response('translate.html', context,
                                   context_instance=RequestContext(request))
+
+
+
+#@login_required
+#def TranslationHandler(request):
+    #try:
+        #translator = request.user.get_profile()
+    #except Translator.DoesNotExist:
+        #return render_to_response('no_translator_profile.html',
+                                  #context_instance=RequestContext(request))
+    #strings_list = extra_funcs.strings_to_translate(request)
+    #if request.method == 'POST':
+        #keys = request.POST.keys()
+        #keys.remove('csrfmiddlewaretoken')
+        #words_count = 0
+
+        #for key in keys:
+            #if request.POST.get(key):  # Translation field in form is not empty
+                #original = String.objects.get(id=int(key))
+                ## The string already has a translation, it must be updated
+                #try:
+                    #string = String.objects.get(language=translator.language,
+                                                #original_string=original)
+                    #if string in strings_list:
+                        #string.text = request.POST.get(key)
+                        #string.last_modif = datetime.now()
+                        #string.translator = request.user.get_profile()
+                        #string.save()
+                    #else:
+                        ## The user is trying to submit again translation that
+                        ## have already been made
+                        #return HttpResponse('Not allowed!')
+
+                ## The translated string must be created
+                #except String.DoesNotExist:
+                    #string = String(language=translator.language,
+                                    #last_modif=datetime.now(),
+                                    #translator=request.user.get_profile(),
+                                    #text=request.POST.get(key),
+                                    #original_string=original)
+                    #string.save()
+                #words_count += len(original.text.split())
+        #translator.words_translated += words_count
+        #translator.save()
+        #return HttpResponseRedirect('/i18n/translate/')
+
+    #else:
+        #paginator = Paginator(strings_list, 2)  # Show 15 strings per page
+        #page = request.GET.get('page')
+        #try:
+            #strings = paginator.page(page)
+        #except PageNotAnInteger:
+            #strings = paginator.page(1)
+        #except EmptyPage:
+            #strings = paginator.page(paginator.num_pages)
+
+        #context = {'strings': strings}
+        #return render_to_response('translate.html', context,
+                                  #context_instance=RequestContext(request))
 
 
 @staff_member_required

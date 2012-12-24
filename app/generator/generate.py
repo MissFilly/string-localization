@@ -58,7 +58,7 @@ class Android():
         response = HttpResponse(mimetype='application/zip')
         response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
                                           (app.__unicode__().replace(' ', '-'))
-        response['Content-Length'] = in_memory.tell
+        response['Content-Length'] = in_memory.tell()
 
         in_memory.seek(0)
         response.write(in_memory.read())
@@ -122,7 +122,7 @@ class WindowsPhone():
         response = HttpResponse(mimetype='application/zip')
         response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
                                           (app.__unicode__().replace(' ', '-'))
-        response['Content-Length'] = in_memory.tell
+        response['Content-Length'] = in_memory.tell()
 
         in_memory.seek(0)
         response.write(in_memory.read())
@@ -175,7 +175,7 @@ class iOS():
         response = HttpResponse(mimetype='application/zip')
         response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
                                           (app.__unicode__().replace(' ', '-'))
-        response['Content-Length'] = in_memory.tell
+        response['Content-Length'] = in_memory.tell()
 
         in_memory.seek(0)
         response.write(in_memory.read())
@@ -194,8 +194,8 @@ class Web():
                                         original_string__app=app)
         for string in strings:
             content += 'when "%s": return "%s"\n' % (string.original_string.text,
-                                                      string.text)
-        content += '\nelse return self' + '\nend'*3
+                                                     string.text)
+        content += '\nelse return self' + '\nend' * 3
         return content.encode('utf-8')
 
     def download_files(self, langs, app):
@@ -218,7 +218,7 @@ class Web():
         response = HttpResponse(mimetype='application/zip')
         response['Content-Disposition'] = 'attachment; filename=%s.zip' % \
                                           (app.__unicode__().replace(' ', '-'))
-        response['Content-Length'] = in_memory.tell
+        response['Content-Length'] = in_memory.tell()
 
         in_memory.seek(0)
         response.write(in_memory.read())
