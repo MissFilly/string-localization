@@ -5,8 +5,7 @@
 {% if strings %}
     <form action="" method="post">
         {% csrf_token %}
-        {{ formset.management_form }}
-        {% for form in formset %}
+        {% for form in formset.forms %}
         <div class="string">
             <p><span>Original text: </span>{{ form.instance.original_string.text }} ({{ form.instance.original_string.text|count_words }} word{% if form.instance.original_string.text|plural %}s{% endif %})</p>
             {{ form.as_p }}

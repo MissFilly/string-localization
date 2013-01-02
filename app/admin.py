@@ -3,7 +3,12 @@
 from django.contrib import admin
 from app.models import Translator, Language, String, App
 
+
+class StringAdmin(admin.ModelAdmin):
+    search_fields = ('text',)
+    list_filter = ('app', 'language')
+
 admin.site.register(Translator)
 admin.site.register(Language)
-admin.site.register(String)
+admin.site.register(String, StringAdmin)
 admin.site.register(App)
