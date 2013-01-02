@@ -119,11 +119,7 @@ def ModifyStringsHandler(request):
     else:
         query = String.objects.filter(translator=translator, frozen=False)
         formset = TranslatedFormSet(queryset=query)
-        paginator = Paginator(formset.forms, 2)  # Show 15 strings per page
-        paginator.count
-        paginator.num_pages
-        paginator.per_page
-        import pdb; pdb.set_trace()
+        paginator = Paginator(formset.forms, 15)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
@@ -131,7 +127,7 @@ def ModifyStringsHandler(request):
             strings = paginator.page(1)
         except EmptyPage:
             strings = paginator.page(paginator.num_pages)
-        context = {'strings': strings, 'formset': formset}
+        context = {'strings': strings}
         return render_to_response('modify.html', context,
                                   context_instance=RequestContext(request))
 
