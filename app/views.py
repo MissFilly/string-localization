@@ -127,7 +127,7 @@ def ModifyStringsHandler(request):
             strings = paginator.page(1)
         except EmptyPage:
             strings = paginator.page(paginator.num_pages)
-        context = {'strings': strings}
+        context = {'strings': strings, 'formset': formset}
         return render_to_response('modify.html', context,
                                   context_instance=RequestContext(request))
 
