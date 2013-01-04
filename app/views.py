@@ -7,7 +7,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import modelformset_factory
-from django.utils.datastructures import MultiValueDictKeyError
 from app.forms import LoginForm, GenerateForm, ModifyForm  # , RegistrationForm
 from app.models import Translator, String
 from django.contrib.auth import authenticate, login, logout
@@ -119,7 +118,7 @@ def ModifyStringsHandler(request):
         return HttpResponseRedirect('/i18n/modify/')
     else:
         query = String.objects.filter(translator=translator, frozen=False)
-        paginator = Paginator(query, 15) # Show 15 strings per page
+        paginator = Paginator(query, 15)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
@@ -231,3 +230,7 @@ def GenerateHandler(request):
         context = {'form': form}
         return render_to_response('generate.html', context,
                                   context_instance=RequestContext(request))
+
+
+def GuidelineHandler(request):
+    return render_to_response('guideline.html', context_instance=RequestContext(request))

@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^translate/$', 'app.views.TranslationHandler'),
     url(r'^modify/$', 'app.views.ModifyStringsHandler'),
     url(r'^generate/$', 'app.views.GenerateHandler'),
+    url(r'^guideline/$', 'app.views.GuidelineHandler'),
 )
