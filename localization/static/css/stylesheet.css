@@ -106,3 +106,8 @@ a:hover {
 .top {
     vertical-align: top;
 }
+
+textarea {
+    height: 20px;
+    padding: 10px;
+}

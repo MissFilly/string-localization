@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import modelformset_factory
+from django.utils.datastructures import MultiValueDictKeyError
 from app.forms import LoginForm, GenerateForm, ModifyForm  # , RegistrationForm
 from app.models import Translator, String
 from django.contrib.auth import authenticate, login, logout
@@ -118,8 +119,7 @@ def ModifyStringsHandler(request):
         return HttpResponseRedirect('/i18n/modify/')
     else:
         query = String.objects.filter(translator=translator, frozen=False)
-        formset = TranslatedFormSet(queryset=query)
-        paginator = Paginator(formset.forms, 15)  # Show 15 strings per page
+        paginator = Paginator(query, 15) # Show 15 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
@@ -127,6 +127,11 @@ def ModifyStringsHandler(request):
             strings = paginator.page(1)
         except EmptyPage:
             strings = paginator.page(paginator.num_pages)
+        page_ids = []
+        for string in strings:
+            page_ids.append(string.id)
+        page_query = String.objects.filter(id__in=page_ids)
+        formset = TranslatedFormSet(queryset=page_query)
         context = {'strings': strings, 'formset': formset}
         return render_to_response('modify.html', context,
                                   context_instance=RequestContext(request))
