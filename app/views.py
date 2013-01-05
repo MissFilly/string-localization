@@ -120,7 +120,7 @@ def ModifyStringsHandler(request):
     else:
         query = String.objects.filter(translator=translator, frozen=False)
         formset = TranslatedFormSet(queryset=query)
-        paginator = Paginator(formset, 15)  # Show 15 strings per page
+        paginator = Paginator(query, 1)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
