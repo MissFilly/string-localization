@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Guideline</h1>
+<p>Please read carefully this guide before strarting to translate.</p>
+<p>Here is a list a things you need to know and pay attention to while translating.</p>
+
+<ul>
+    <li>
+        <h3>Uppercase and lowercase letters</h3>
+        <p>It is important that you respect uppercase and lowercase in the original sentence (the sentence in English) at all times. For example:</p>
+        <p><span class="example">Hello, world</span> would be translated in Spanish as <span class="example">Hola, mundo</span>.</p>
+        <p><span class="example">Hello, World</span> would be translated as <span class="example">Hola, Mundo</span>.</p>
+    </li>
+    <li>
+        <h3>Punctuation</h3>
+        <p>The same way, you must follow the same punctuation as the original string.</p>
+        <p><span class="example">Hello, world.</span> would be translated in Spanish as <span class="example">Hola, mundo.</span>.</p>
+        <p><span class="example">Hello, world</span> would be translated as <span class="example">Hola, mundo</span>.</p>
+        <p><span class="example">Hello, world!</span> would be translated as <span class="example">¡Hola, mundo!</span>.</p>
+    </li>
+    <li>
+        <h3>String formatting</h3>
+        <p>Some sentences contain symbols that later the program of our app will replace with another letter, sentence or number. You'll normally encounter these symbols as <span class="example">%s</span> or <span class="example">%@</span>.</p>
+        <p>They act like wildcards, so a sentence like <span class="example">Hello, %s!</span>, after our app replaces the symbol with the corresponding name, could be <span class="example">Hello, John!</span>, <span class="example">Hello, Mary!</span>, <span class="example">Hello, dog!</span>, etc.</p>
+        <p>Knowing this, you should follow the pattern so the sentence makes sense in the translated language. For example:</p>
+        <p><span class="example">Hello, %s!</span> would be translated in Spanish as <span class="example">¡Hola, %s!</span>.</p>
+    </li>
+    <li>
+        <h3>Other symbols</h3>
+        <p></p>
+    <li>
+        <h3>Modifying your work</h3>
+        <p>You are able to modify the translations you've made...</p>
+    </li>
+    <li>
+        <h3>Typos and non-translatable strings</h3>
+        <p>It is possible that at some point of time you encounter errors in the original sentences. These could be typographical or even ortographical. We'd be very thankful if you let us know in case you find one of these!</p>
+        <p>Also, there are some strings in our database that are not supposed to be translated, for example our apps' names. If you find a sentence that doesn't look at all like it should be shown to our users or translated, please let us know too!</p>
+    </li>
+</ul>
+{% endblock %}

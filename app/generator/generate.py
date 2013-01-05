@@ -15,18 +15,18 @@ class Android():
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
             for string in strings:
-                line = etree.SubElement(root, 'string',
-                                        name=string.android_name_string)
-                line.text = string.text
+                keys = string.android_name_string.split(',')
+                for key in keys:
+                    line = etree.SubElement(root, 'string', name=key)
+                    line.text = string.text
         else:
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
-                line = etree.SubElement(
-                                root, 'string',
-                                name=string.original_string.android_name_string
-                                )
-                line.text = string.text
+                keys = string.original_string.android_name_string.split(',')
+                for key in keys:
+                    line = etree.SubElement(root, 'string', name=string.key)
+                    line.text = string.text
         content = etree.tostring(root, encoding='utf-8',
                                  xml_declaration=True, pretty_print=True)
         return content
@@ -73,13 +73,15 @@ class WindowsPhone():
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
             for string in strings:
-                line = etree.SubElement(
-                                root, 'data',
-                                name=string.wp_name_string, attrib=
-                                {'{http://www.w3.org/XML/1998/namespace}space':
-                                'preserve'})
-                value = etree.SubElement(line, 'value')
-                value.text = string.text
+                keys = string.wp_name_string.split(',')
+                for key in keys:
+                    line = etree.SubElement(
+                                 root, 'data',
+                                 name=key, attrib=
+                                 {'{http://www.w3.org/XML/1998/namespace}space':
+                                 'preserve'})
+                    value = etree.SubElement(line, 'value')
+                    value.text = string.text
                 if string.description:
                     comment = etree.SubElement(line, 'comment')
                     comment.text = string.description
@@ -87,13 +89,15 @@ class WindowsPhone():
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
-                line = etree.SubElement(
-                            root, 'string',
-                            name=string.original_string.wp_name_string, attrib=
-                            {'{http://www.w3.org/XML/1998/namespace}space':
-                            'preserve'})
-                value = etree.SubElement(line, 'value')
-                value.text = string.text
+                keys = string.original_string.wp_name_string.split(',')
+                for key in keys:
+                    line = etree.SubElement(
+                                root, 'data',
+                                name=key, attrib=
+                                {'{http://www.w3.org/XML/1998/namespace}space':
+                                'preserve'})
+                    value = etree.SubElement(line, 'value')
+                    value.text = string.text
                 if string.original_string.description:
                     comment = etree.SubElement(line, 'comment')
                     comment.text = string.original_string.description
@@ -137,20 +141,24 @@ class iOS():
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
             for string in strings:
+                keys = string.ios_name_string.split(',')
                 if string.description:
                     content += '\n\n/* %s */' % string.description
-                content += '\n"%s" = "%s";' % (string.ios_name_string,
-                                               string.text)
+                for key in keys:
+                    content += '\n"%s" = "%s";' % (key,
+                                                   string.text)
         else:
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
+                keys = string.original_string.ios_name_string.split(',')
                 if string.original_string.description:
                     content += '\n\n/* %s */' % \
                                         string.original_string.description
-                content += '\n"%s" = "%s";' % \
-                                       (string.original_string.ios_name_string,
-                                        string.text)
+                for key in keys:
+                    content += '\n"%s" = "%s";' % \
+                                        (string.original_string.ios_name_string,
+                                         string.text)
         return content.encode('utf-16')
 
     def download_files(self, langs, app):

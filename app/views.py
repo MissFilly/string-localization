@@ -119,8 +119,7 @@ def ModifyStringsHandler(request):
         return HttpResponseRedirect('/i18n/modify/')
     else:
         query = String.objects.filter(translator=translator, frozen=False)
-        formset = TranslatedFormSet(queryset=query)
-        paginator = Paginator(query, 1)  # Show 15 strings per page
+        paginator = Paginator(query, 15)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
@@ -128,9 +127,26 @@ def ModifyStringsHandler(request):
             strings = paginator.page(1)
         except EmptyPage:
             strings = paginator.page(paginator.num_pages)
+        page_ids = []
+        for string in strings:
+            page_ids.append(string.id)
+        page_query = String.objects.filter(id__in=page_ids)
+        formset = TranslatedFormSet(queryset=page_query)
         context = {'strings': strings, 'formset': formset}
         return render_to_response('modify.html', context,
                                   context_instance=RequestContext(request))
+
+
+#@login_required
+#def TranslationHandler(request):
+    #try:
+        #translator = request.user.get_profile()
+    #except Translator.DoesNotExist:
+        #return render_to_response('no_translator_profile.html',
+                                  #context_instance=RequestContext(request))
+    #if request.method == 'POST':
+        #pass
+    #else:
 
 
 @login_required
@@ -261,10 +277,14 @@ def GenerateHandler(request):
             elif platform == 'web':
                 return generate.Web().download_files(language, app)
         else:
-            return render_to_response('/i18n/generate', {'form': form},
+            return render_to_response('generate.html', {'form': form},
                                       context_instance=RequestContext(request))
     else:
         form = GenerateForm()
         context = {'form': form}
         return render_to_response('generate.html', context,
                                   context_instance=RequestContext(request))
+
+
+def GuidelineHandler(request):
+    return render_to_response('guideline.html', context_instance=RequestContext(request))

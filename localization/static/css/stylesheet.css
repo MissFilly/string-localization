@@ -67,13 +67,14 @@ body {
     padding: 50px 70px;
 }
 
-#content > p {
-    margin-bottom: 23px;
+#content p {
+    margin-bottom: 25px;
+    line-height: 23px;
 }
 
 h1 {
     border-bottom: 1px solid white;
-    font-size: 24px;
+    font-size: 25px;
     margin-bottom: 30px;
     padding-bottom: 20px;
 }
@@ -105,4 +106,20 @@ a:hover {
 
 .top {
     vertical-align: top;
+}
+
+textarea {
+    height: 20px;
+    padding: 10px;
+}
+
+.example {
+    background-color: #666666;
+    font-family: 'Anaheim',sans-serif;
+    padding: 1px 7px;
+}
+
+h3 {
+    font-size: 19px;
+    margin: 50px 0 30px;
 }
