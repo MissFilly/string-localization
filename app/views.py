@@ -127,10 +127,7 @@ def ModifyStringsHandler(request):
             strings = paginator.page(1)
         except EmptyPage:
             strings = paginator.page(paginator.num_pages)
-        page_ids = []
-        for string in strings:
-            page_ids.append(string.id)
-        page_query = String.objects.filter(id__in=page_ids)
+        page_query = String.objects.filter(id__in=[string.id for string in strings])
         formset = TranslatedFormSet(queryset=page_query)
         context = {'strings': strings, 'formset': formset}
         return render_to_response('modify.html', context,
