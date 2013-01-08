@@ -152,9 +152,7 @@ def TranslationHandler(request):
         words_count = 0
         formset = ToTranslateFormSet(request.POST, request.FILES)
         for form in formset:
-            if not form.instance in query:
-                pass
-            elif form.is_valid() and form.cleaned_data['translation']:
+            if form.instance in query and form.is_valid() and form.cleaned_data['translation']:
                 translation = form.cleaned_data['translation']
                 string, created = String.objects.get_or_create(
                                               language=translator.language,
@@ -172,7 +170,7 @@ def TranslationHandler(request):
                 words_count += len(form.instance.text.split())
         translator.words_translated += words_count
         translator.save()
-        return HttpResponseRedirect('/translate/')
+        return HttpResponseRedirect('/i18n/translate/')
 
     else:
         paginator = Paginator(query, 15)  # Show 15 strings per page
