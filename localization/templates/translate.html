@@ -1,18 +1,19 @@
 {% extends "base.html" %}
-{% block extrahead %}
-{% endblock %}
 {% block content %}
 {% load custom_tags %}
-<h1>Translate</h1>
+<h1>Modify strings</h1>
 {% if strings %}
     <form action="" method="post">
         {% csrf_token %}
         {{ formset.management_form }}
-        {% for form in formset %}
-        <div class="string">
-            <p><span>Original text: </span>{{ form.instance.text }} ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %})</p>
-            {{ form.as_p }}
-        </div>
+        {% for form in formset.forms %}
+            {{ form.id }}
+            <div class="string-frame">
+                <div class="string">
+                    <p><span>Original text: </span>{{ form.instance.text }} ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %})</p>
+                    {{ form.as_p }}
+                </div>
+            </div>
         {% endfor %}
         <input type="submit" value="Save" />
     </form>

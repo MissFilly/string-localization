@@ -55,7 +55,10 @@ class ModifyForm(forms.ModelForm):
 
 
 class TranslateForm(forms.ModelForm):
-    translation = forms.CharField(label=(u'Translation'), widget=forms.Textarea)
+    translation = forms.CharField(label=(u'Translation'),
+                                  widget=forms.Textarea,
+                                  required=False)
 
     class Meta:
         model = String
+        fields = ()
