@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.forms.models import modelformset_factory, formset_factory
+from django.forms.models import modelformset_factory
 from django.db.models import Q, F
 from app.forms import LoginForm, GenerateForm, ModifyForm, TranslateForm  # , RegistrationForm
 from app.models import Translator, String
 from django.contrib.auth import authenticate, login, logout
 from datetime import datetime
-from localization.utils import extra_funcs
 from generator import generate
 
 
@@ -118,7 +117,8 @@ def ModifyStringsHandler(request):
             formset.save()
         return HttpResponseRedirect('/i18n/modify/')
     else:
-        query = String.objects.filter(translator=translator, frozen=False)
+        query = String.objects.filter(translator=translator, frozen=False,
+                                      original_string__last_modif__lt=F('last_modif'))
         paginator = Paginator(query, 15)  # Show 15 strings per page
         page = request.GET.get('page')
         try:
@@ -146,7 +146,8 @@ def TranslationHandler(request):
     query = String.objects.filter((Q(string__language=translator.language,
                                   string__last_modif__lt=F('last_modif')) |
                                   ~Q(string__language=translator.language)),
-                                  enabled=True, translatable=True)
+                                  enabled=True, translatable=True,
+                                  language__name='English')
     ToTranslateFormSet = modelformset_factory(String, form=TranslateForm, extra=0)
     if request.method == 'POST':
         words_count = 0
@@ -183,7 +184,13 @@ def TranslationHandler(request):
             strings = paginator.page(paginator.num_pages)
         page_query = String.objects.filter(id__in=[string.id for string in strings])
         formset = ToTranslateFormSet(queryset=page_query)
-        context = {'strings': strings, 'formset': formset}
+        remaining_words = 0
+        # Count of total words to be translated
+        for string in query:
+            remaining_words += len(string.text.split())
+        context = {'strings': strings, 'formset': formset,
+                   'remaining': remaining_words,
+                   'done': translator.words_translated}
         return render_to_response('translate.html', context,
                                   context_instance=RequestContext(request))
 

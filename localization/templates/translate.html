@@ -11,6 +11,7 @@
             <div class="string-frame">
                 <div class="string">
                     <p><span>Original text: </span>{{ form.instance.text }} ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %})</p>
+                    {% if form.instance.description %}<p><span>Description: </span>{{ form.instance.description }}{% endif %}
                     {{ form.as_p }}
                 </div>
             </div>
@@ -32,6 +33,10 @@
                 <a href="?page={{ strings.next_page_number }}">next</a>
             {% endif %}
         </span>
+    </div>
+
+    <div class="remaining-words">
+        <p>You have translated {{ done }} words out of {{ done|add:remaining }}. You have {{ remaining }} words left to translate.</p>
     </div>
 {% else %}
     <p>You have no more strings to translate.</p>

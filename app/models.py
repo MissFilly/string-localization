@@ -32,7 +32,7 @@ class App(models.Model):
 class Translator(models.Model):
     user = models.OneToOneField(User)
     language = models.ForeignKey(Language)
-    words_translated = models.IntegerField()
+    words_translated = models.IntegerField(default=0)
 
     def __unicode__(self):
         return '%s - %s' % (self.user.username, self.language.name)
