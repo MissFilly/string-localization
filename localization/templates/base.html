@@ -16,7 +16,7 @@
                     {% load custom_tags %}
                     {% if user.is_authenticated %}
                         <li><a class="{% active request '^/i18n/translate/$' %}" href="/i18n/translate/">Translate</a></li>
-                        <li><a class="{% active request '^/i18n/modify/$' %}" href="/i18n/modify/">Edit</a></li>
+                        <li><a class="{% active request '^/i18n/modify/$' %}" href="/i18n/modify/">Modify</a></li>
                         <li><a class="{% active request '^/i18n/guidelines/$' %}" href="/i18n/guidelines/">Guidelines</a></li>
                         <li><a class="{% active request '^/i18n/profile/$' %}" href="/i18n/profile/">Profile</a></li>
                         <li><a class="{% active request '^/i18n/logout/$' %}" href="/i18n/logout/">Logout</a></li>
