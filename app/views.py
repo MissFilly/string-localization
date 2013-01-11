@@ -119,7 +119,7 @@ def ModifyStringsHandler(request):
     else:
         query = String.objects.filter(translator=translator, frozen=False,
                                       original_string__last_modif__lt=F('last_modif'))
-        paginator = Paginator(query, 15)  # Show 15 strings per page
+        paginator = Paginator(query, 5)  # Show 5 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)
@@ -174,7 +174,7 @@ def TranslationHandler(request):
         return HttpResponseRedirect('/i18n/translate/')
 
     else:
-        paginator = Paginator(query, 15)  # Show 15 strings per page
+        paginator = Paginator(query, 5)  # Show 5 strings per page
         page = request.GET.get('page')
         try:
             strings = paginator.page(page)

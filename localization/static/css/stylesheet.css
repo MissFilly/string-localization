@@ -53,7 +53,7 @@ body {
     text-decoration: none;
 }
 
-#nav a:hover {
+#nav a:hover, #nav .active {
     background-color: #232323;
 }
 
