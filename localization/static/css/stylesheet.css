@@ -32,6 +32,12 @@ body {
     margin-left: 10px;
 }
 
+.title, .title:hover {
+    text-decoration: none;
+    background-color: transparent;
+    color: white;
+    }
+
 #nav {
     float: right;
     margin-top: 26px;
