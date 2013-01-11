@@ -184,13 +184,17 @@ def TranslationHandler(request):
             strings = paginator.page(paginator.num_pages)
         page_query = String.objects.filter(id__in=[string.id for string in strings])
         formset = ToTranslateFormSet(queryset=page_query)
-        remaining_words = 0
+        words_remaining = 0
         # Count of total words to be translated
         for string in query:
-            remaining_words += len(string.text.split())
+            words_remaining += len(string.text.split())
         context = {'strings': strings, 'formset': formset,
-                   'remaining': remaining_words,
-                   'done': translator.words_translated}
+                   'words_remaining': words_remaining,
+                   'words_translated': translator.words_translated,
+                   'sentences_remaining': len(query),
+                   'sentences_translated': len(String.objects.filter(translator=translator, frozen=False,
+                                                                     original_string__last_modif__lt=F('last_modif'))),
+                  }
         return render_to_response('translate.html', context,
                                   context_instance=RequestContext(request))
 

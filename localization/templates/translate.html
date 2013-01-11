@@ -35,8 +35,17 @@
         </span>
     </div>
 
-    <div class="remaining-words">
-        <p>You have translated {{ done }} words out of {{ done|add:remaining }}. You have {{ remaining }} words left to translate.</p>
+    <div>
+        <table class="translation-stats">
+            <tr>
+                <td>Words translated: {{ words_translated }}</td>
+                <td>Words remaining: {{ words_remaining }}</td>
+            </tr>
+            <tr>
+                <td>Sentences translated: {{ sentences_translated }}</td>
+                <td>Sentences remaining: {{ sentences_remaining }}</td>
+            </tr>
+        </table>
     </div>
 {% else %}
     <p>You have no more strings to translate.</p>

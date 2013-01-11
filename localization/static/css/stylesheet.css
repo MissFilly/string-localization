@@ -129,3 +129,11 @@ h3 {
     font-size: 19px;
     margin: 50px 0 30px;
 }
+
+.translation-stats {
+    margin: 20px auto auto;
+    }
+
+.translation-stats td {
+    padding: 18px;
+}
