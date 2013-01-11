@@ -23,7 +23,7 @@ class App(models.Model):
     platform = models.CharField(max_length=20)
 
     class Meta:
-        ordering = ['name']
+        ordering = ['name', 'platform']
 
     def __unicode__(self):
         return u'%s for %s' % (self.name, self.platform)
