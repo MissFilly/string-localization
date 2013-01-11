@@ -17,7 +17,7 @@
                     {% if user.is_authenticated %}
                         <li><a class="{% active request '^/translate/$' %}" href="/i18n/translate/">Translate</a></li>
                         <li><a class="{% active request '^/modify/$' %}" href="/i18n/modify/">Work done</a></li>
-                        <li><a class="{% active request '^/guideline/$' %}" href="/i18n/guideline/">Guidelines</a></li>
+                        <li><a class="{% active request '^/guidelines/$' %}" href="/i18n/guidelines/">Guidelines</a></li>
                         <li><a class="{% active request '^/profile/$' %}" href="/i18n/profile/">Profile</a></li>
                         <li><a class="{% active request '^/logout/$' %}" href="/i18n/logout/">Logout</a></li>
                     {% else %}

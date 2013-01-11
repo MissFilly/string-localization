@@ -221,5 +221,5 @@ def GenerateHandler(request):
                                   context_instance=RequestContext(request))
 
 
-def GuidelineHandler(request):
-    return render_to_response('guideline.html', context_instance=RequestContext(request))
+def GuidelinesHandler(request):
+    return render_to_response('guidelines.html', context_instance=RequestContext(request))
