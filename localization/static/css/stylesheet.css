@@ -137,3 +137,9 @@ h3 {
 .translation-stats td {
     padding: 18px;
 }
+
+.small-keys {
+    font-size: 9px;
+    float: right;
+    opacity: 0.50;
+}
