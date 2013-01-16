@@ -59,5 +59,11 @@ class String(models.Model):
     frozen = models.BooleanField(default=False)
     enabled = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['text']
+
     def __unicode__(self):
-        return '%s (%s)' % (self.text, self.language.name)
+        if self.language.name == 'English':
+            return '%s (%s)' % (self.text, self.language.name)
+        else:
+            return '%s [%s] (%s)' % (self.text, self.original_string.text, self.language.name)
