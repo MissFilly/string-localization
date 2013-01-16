@@ -147,7 +147,7 @@ def TranslationHandler(request):
                                   string__last_modif__lt=F('last_modif')) |
                                   ~Q(string__language=translator.language)),
                                   enabled=True, translatable=True,
-                                  language__name='English')
+                                  language__name='English').distinct()
     ToTranslateFormSet = modelformset_factory(String, form=TranslateForm, extra=0)
     if request.method == 'POST':
         words_count = 0
@@ -195,6 +195,7 @@ def TranslationHandler(request):
                    'sentences_translated': len(String.objects.filter(translator=translator, frozen=False,
                                                                      original_string__last_modif__lt=F('last_modif'))),
                   }
+        import pdb; pdb.set_trace()
         return render_to_response('translate.html', context,
                                   context_instance=RequestContext(request))
 
