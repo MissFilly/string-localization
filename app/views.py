@@ -195,7 +195,6 @@ def TranslationHandler(request):
                    'sentences_translated': len(String.objects.filter(translator=translator, frozen=False,
                                                                      original_string__last_modif__lt=F('last_modif'))),
                   }
-        import pdb; pdb.set_trace()
         return render_to_response('translate.html', context,
                                   context_instance=RequestContext(request))
 
