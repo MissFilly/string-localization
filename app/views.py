@@ -115,7 +115,12 @@ def ModifyStringsHandler(request):
         formset = TranslatedFormSet(request.POST, request.FILES)
         if formset.is_valid():
             formset.save()
-        return HttpResponseRedirect('/i18n/modify/')
+        page = request.GET.get('page')
+        if page is not None:
+            next_page = str(int(page) + 1)
+        else:
+            next_page = '2'
+        return HttpResponseRedirect('/i18n/modify/?page=' + next_page)
     else:
         query = String.objects.filter(translator=translator, frozen=False,
                                       original_string__last_modif__lt=F('last_modif'))
@@ -171,7 +176,12 @@ def TranslationHandler(request):
                 words_count += len(form.instance.text.split())
         translator.words_translated += words_count
         translator.save()
-        return HttpResponseRedirect('/i18n/translate/')
+        page = request.GET.get('page')
+        if page is not None:
+            next_page = str(int(page) + 1)
+        else:
+            next_page = u'2'
+        return HttpResponseRedirect('/i18n/translate/?page=' + next_page)
 
     else:
         paginator = Paginator(query, 5)  # Show 5 strings per page

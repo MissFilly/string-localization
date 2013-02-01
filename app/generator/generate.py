@@ -25,7 +25,7 @@ class Android():
             for string in strings:
                 keys = string.original_string.android_name_string.split(',')
                 for key in keys:
-                    line = etree.SubElement(root, 'string', name=string.key)
+                    line = etree.SubElement(root, 'string', name=key)
                     line.text = string.text
         content = etree.tostring(root, encoding='utf-8',
                                  xml_declaration=True, pretty_print=True)
