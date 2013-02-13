@@ -29,8 +29,8 @@ class Android():
                     line.text = string.text
         content = etree.tostring(root, encoding='utf-8',
                                  xml_declaration=True, pretty_print=True)
-        # As our strings already have special characters scaped, the automatic
-        # scape from lxml would mess them up
+        # As our Android strings already have special characters scaped, the
+        # automatic scape from lxml would mess them up
         return content.replace('&amp;', '&')
 
     def download_files(self, langs, app):
@@ -104,9 +104,7 @@ class WindowsPhone():
                     comment = etree.SubElement(line, 'comment')
                     comment.text = string.original_string.description
         content = etree.tostring(root, encoding='utf-8', pretty_print=True)
-        # As our strings already have special characters scaped, the automatic
-        # scape from lxml would mess them up
-        return content.replace('&amp;', '&')
+        return content
 
     def download_files(self, langs, app):
         in_memory = StringIO()
@@ -201,9 +199,12 @@ class Web():
                   'class String\n' + \
                   'def t_' + lang.iso_639 + '\n' \
                   'case self\n'
-
-        strings = String.objects.filter(enabled=True, language=lang,
-                                        original_string__app=app)
+        if app.name == 'All':
+            strings = String.objects.filter(enabled='True', language=lang,
+                                            original_string__app__platform='Web')
+        else:
+            strings = String.objects.filter(enabled=True, language=lang,
+                                            original_string__app=app)
         for string in strings:
             content += 'when "%s": return "%s"\n' % (string.original_string.text,
                                                      string.text)
