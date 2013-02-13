@@ -206,8 +206,8 @@ class Web():
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
         for string in strings:
-            content += 'when "%s": return "%s"\n' % (string.original_string.text.replace('"', '\"'),
-                                                     string.text.replace('"', '\"'))
+            content += 'when "%s": return "%s"\n' % (string.original_string.text.replace('"', '\\"'),
+                                                     string.text.replace('"', '\\"'))
         content += '\nelse return self' + '\nend' * 3
         return content.encode('utf-8')
 
