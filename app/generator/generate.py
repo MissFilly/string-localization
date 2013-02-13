@@ -218,6 +218,9 @@ class Web():
         for l in langs:
             if l.name == 'English':
                 pass
+            if langs.filter(iso_639=l.iso_639).count() > 1:
+                zip_file.writestr('%s-%s.rb' % (l.iso_639, l.iso_3166),
+                                  self.generate_file(l, app))
             else:
                 zip_file.writestr('%s.rb' % l.iso_639,
                                   self.generate_file(l, app))

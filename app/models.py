@@ -63,7 +63,4 @@ class String(models.Model):
         ordering = ['text']
 
     def __unicode__(self):
-        if self.language.name == 'English':
-            return '%s (%s)' % (self.text, self.language.name)
-        else:
-            return '%s [%s] (%s)' % (self.text, self.original_string.text, self.language.name)
+        return '%s (%s)' % (self.text, self.language.name)
