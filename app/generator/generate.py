@@ -29,7 +29,9 @@ class Android():
                     line.text = string.text
         content = etree.tostring(root, encoding='utf-8',
                                  xml_declaration=True, pretty_print=True)
-        return content
+        # As our strings already have special characters scaped, the automatic
+        # scape from lxml would mess them up
+        return content.replace('&amp;', '&')
 
     def download_files(self, langs, app):
         in_memory = StringIO()
@@ -102,7 +104,9 @@ class WindowsPhone():
                     comment = etree.SubElement(line, 'comment')
                     comment.text = string.original_string.description
         content = etree.tostring(root, encoding='utf-8', pretty_print=True)
-        return content
+        # As our strings already have special characters scaped, the automatic
+        # scape from lxml would mess them up
+        return content.replace('&amp;', '&')
 
     def download_files(self, langs, app):
         in_memory = StringIO()
