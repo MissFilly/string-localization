@@ -139,28 +139,32 @@ class iOS():
 
     def generate_file(self, lang, app):
         content = u''
+
         if lang.name == 'English':
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
             for string in strings:
-                keys = string.ios_name_string.split(',')
+                if app.platform == 'iOS':
+                    keys = string.ios_name_string.split(',')
+                elif app.platform == 'OSX':
+                    keys = string.osx_name_string.split(',')
                 if string.description:
                     content += '\n\n/* %s */' % string.description
                 for key in keys:
-                    content += '\n"%s" = "%s";' % (key,
-                                                   string.text)
+                    content += '\n"%s" = "%s";' % (key, string.text)
         else:
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
-                keys = string.original_string.ios_name_string.split(',')
+                if app.platform == 'iOS':
+                    keys = string.original_string.ios_name_string.split(',')
+                elif app.platform == 'OSX':
+                    keys = string.original_string.osx_name_string.split(',')
                 if string.original_string.description:
                     content += '\n\n/* %s */' % \
                                         string.original_string.description
                 for key in keys:
-                    content += '\n"%s" = "%s";' % \
-                                        (string.original_string.ios_name_string,
-                                         string.text)
+                    content += '\n"%s" = "%s";' % (key, string.text)
         return content.encode('utf-16')
 
     def download_files(self, langs, app):
