@@ -75,7 +75,10 @@ class WindowsPhone():
             strings = String.objects.filter(enabled=True, language=lang,
                                             app=app)
             for string in strings:
-                keys = string.wp_name_string.split(',')
+                if app.platform == 'Windows Phone':
+                    keys = string.wp_name_string.split(',')
+                elif app.platform == 'Windows 8':
+                    keys = string.w8_name_string.split(',')
                 for key in keys:
                     line = etree.SubElement(
                                  root, 'data',
@@ -91,7 +94,10 @@ class WindowsPhone():
             strings = String.objects.filter(enabled=True, language=lang,
                                             original_string__app=app)
             for string in strings:
-                keys = string.original_string.wp_name_string.split(',')
+                if app.platform == 'Windows Phone':
+                    keys = string.original_string.wp_name_string.split(',')
+                elif app.platform == 'Windows 8':
+                    keys = string.original_string.w8_name_string.split(',')
                 for key in keys:
                     line = etree.SubElement(
                                 root, 'data',
