@@ -37,5 +37,10 @@
 {% else %}
     <p>You haven't made any translations yet.</p>
 {% endif %}
+    <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.autogrow-textarea.js"></script>
+    <script>$(function() {
+   $('textarea').autogrow();
+});</script>
 {% endblock %}
 
