@@ -1,5 +1,5 @@
 *.pyc
-settings.py
 *.json
 *~
 .settings.py.swp
+__pycache__
