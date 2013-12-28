@@ -28,8 +28,9 @@ class App(models.Model):
         return u'%s for %s' % (self.name, self.platform)
 
 
-class Translator(AbstractUser):
-    language = models.ForeignKey(Language, null=True, blank=True)
+class Translator(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL)
+    language = models.ForeignKey(Language)
     words_translated = models.IntegerField(default=0)
 
     def __unicode__(self):
@@ -53,7 +54,7 @@ class String(models.Model):
     original_string = models.ForeignKey('self', null=True, blank=True)
     translatable = models.BooleanField(default=True)
     last_modif = models.DateTimeField(default=datetime.now())
-    translator = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
+    translator = models.ForeignKey(Translator, null=True, blank=True)
     frozen = models.BooleanField(default=False)
     enabled = models.BooleanField(default=True)
 

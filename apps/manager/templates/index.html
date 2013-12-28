@@ -1,6 +1,7 @@
 {% extends "base/base.html" %}
+{% load url from future %}
 {% block content %}
 <h1>Welcome!</h1>
-<p>To start translating, <a href="/i18n/login/">login</a> to your account.</p>
-<p>Please, make sure to read the <a href="/i18n/guidelines/">Guidelines</a> before starting.</p>
+<p>To start translating, <a href="{% url 'login' %}">login</a> to your account.</p>
+<p>Please, make sure to read the <a href="{% url 'guide' %}">Guidelines</a> before starting.</p>
 {% endblock %}

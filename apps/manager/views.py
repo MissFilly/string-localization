@@ -7,7 +7,7 @@ from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import modelformset_factory
 from django.db.models import Q, F
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from apps.manager.forms import LoginForm, GenerateForm, ModifyForm, TranslateForm  # , RegistrationForm
 from apps.manager.models import Translator, String
 from apps.manager import generator
@@ -148,6 +148,7 @@ def TranslationHandler(request):
     #                              context_instance=RequestContext(request))
     # This query retrieves string in English that either have a translation
     # that is outdated or have no translation (in the translator's language)
+    translator = Translator.objects.get(user=request.user)
     query = String.objects.filter((Q(string__language=translator.language,
                                   string__last_modif__lt=F('last_modif')) |
                                   ~Q(string__language=translator.language)),

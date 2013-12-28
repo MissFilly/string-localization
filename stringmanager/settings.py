@@ -84,5 +84,3 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(SITE_ROOT, 'static')
-
-AUTH_USER_MODEL = 'manager.Translator'
