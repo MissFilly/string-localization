@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}
+{% block content %}
+<h1>Profile</h1>
+<p>User name: {{ request.user.username }}</p>
+<p>Name: {{ request.user.first_name }}</p>
+<p>Last name: {{ request.user.last_name }}</p>
+<p>Email: {{ request.user.email }}</p>
+<p>Translation language: {{ request.user.language.name }}</p>
+<p>Words translated: {{ request.user.words_translated }}</p>
+{% endblock %}
