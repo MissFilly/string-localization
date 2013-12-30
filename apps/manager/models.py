@@ -13,7 +13,7 @@ class Language(models.Model):
         ordering = ['name']
         unique_together = ('iso_639', 'iso_3166',)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s (%s-%s)' % (self.name, self.iso_639, self.iso_3166)
 
 
@@ -24,7 +24,7 @@ class App(models.Model):
     class Meta:
         ordering = ['name', 'platform']
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s for %s' % (self.name, self.platform)
 
 
@@ -33,7 +33,7 @@ class Translator(models.Model):
     language = models.ForeignKey(Language)
     words_translated = models.IntegerField(default=0)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s - %s' % (self.user.username, self.language.name)
 
 
@@ -61,5 +61,5 @@ class String(models.Model):
     class Meta:
         ordering = ['text']
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.text, self.language.name)

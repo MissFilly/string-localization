@@ -55,14 +55,13 @@ def MainPageHandler(request):
 
 def LoginRequest(request):
     # Check if logged user is a translator
-    #if request.user.is_authenticated():
-        # TODO: Check if translator has language
-        #try:
-        #    translator = request.user.get_profile()
-        #    return HttpResponseRedirect('/profile/')
-        #except Translator.DoesNotExist:
-        #    return render_to_response('no_translator_profile.html', { 'request' : request },
-        #                             context_instance=RequestContext(request))
+    if request.user.is_authenticated():
+        try:
+            translator = request.user.get_profile()
+            return HttpResponseRedirect('/profile/')
+        except Translator.DoesNotExist:
+            return render_to_response('no_translator_profile.html', { 'request' : request },
+                                     context_instance=RequestContext(request))
     # Form is being submitted
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -141,14 +140,13 @@ def ModifyStringsHandler(request):
 
 @login_required
 def TranslationHandler(request):
-    #try:
-    #    translator = request.user.get_profile()
-    #except Translator.DoesNotExist:
-    #    return render_to_response('no_translator_profile.html',
-    #                              context_instance=RequestContext(request))
+    try:
+        translator = Translator.objects.get(user=request.user)
+    except Translator.DoesNotExist:
+        return render_to_response('no_translator_profile.html', {'request':request},
+                                  context_instance=RequestContext(request))
     # This query retrieves string in English that either have a translation
     # that is outdated or have no translation (in the translator's language)
-    translator = Translator.objects.get(user=request.user)
     query = String.objects.filter((Q(string__language=translator.language,
                                   string__last_modif__lt=F('last_modif')) |
                                   ~Q(string__language=translator.language)),

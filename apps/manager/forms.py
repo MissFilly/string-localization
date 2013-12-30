@@ -48,8 +48,8 @@ class GenerateForm(forms.Form):
 
 class ModifyForm(forms.ModelForm):
     text = forms.CharField(label=(u'Translation'),
-                           widget=forms.Textarea(attrs={'class': 'expand',
-                                                        'rows': '1'}))
+                           widget=forms.Textarea(attrs={'class': 'form-control expand',
+                                                        'rows': '2'}))
 
     class Meta:
         model = String
@@ -58,8 +58,8 @@ class ModifyForm(forms.ModelForm):
 
 class TranslateForm(forms.ModelForm):
     translation = forms.CharField(label=(u'Translation'),
-                                  widget=forms.Textarea(attrs={'class': 'expand',
-                                                               'rows': '1'}),
+                                  widget=forms.Textarea(attrs={'class': 'form-control expand',
+                                                               'rows': '2'}),
                                   required=False)
 
     class Meta:

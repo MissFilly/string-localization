@@ -1,62 +1,96 @@
 {% extends "base/base.html" %}
+{% load staticfiles %}
+{% block extrawellclass %}col-lg-8 col-lg-offset-2{% endblock %}
 {% block content %}
 {% load custom_tags %}
 <h1>Translate</h1>
 {% if strings %}
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        {% for form in formset.forms %}
-            {{ form.id }}
-            <div class="string-frame">
-                <div class="string">
-                    <p>
-                        <span>Original text: </span>{{ form.instance.text }}
-                        ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %})
-                    </p>
-                    {% if form.instance.description %}<p><span>Description: </span>{{ form.instance.description }}{% endif %}
-                    {{ form.as_p }}
-                    <p class="small-keys">{% if form.instance.android_name_string %}{{ form.instance.android_name_string }},{% endif %}{% if form.instance.ios_name_string %}{{ form.instance.ios_name_string }},{% endif %}{% if form.instance.wp_name_string %}{{ form.instance.wp_name_string }},{% endif %}{% if form.instance.osx_name_string %}{{ form.instance.osx_name_string }},{% endif %}{% if form.instance.w8_name_string %}{{ form.instance.w8_name_string }},{% endif %}</p>
-                </div>
-            </div>
-        {% endfor %}
-        <input type="submit" value="Save" />
-    </form>
+<form action="" method="post">
+	{% csrf_token %}
+	{{ formset.management_form }}
+	{% for form in formset.forms %}
+	{{ form.id }}
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<label>Original text ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %}):</label>
+			<p class="alert alert-dismissable alert-info">
+				{{ form.instance.text|linebreaksbr }}
+			</p>
+			{% if form.instance.description %}
+			<p>
+				<span>Description: </span>{{ form.instance.description }}{% endif %}
+				{{ form.as_p }}
+		</div>
+	</div>
+	{% endfor %}
+	<input type="submit" value="Save" class="btn btn-primary" />
+</form>
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if strings.has_previous %}
-                <a href="?page={{ strings.previous_page_number }}">Previous</a>
-            {% endif %}
+<ul class="pagination pagination-sm">
+	{# Create A Button Group that contains possible pages to navigate to #}
+	{% for page in paginator.page_range %}
 
-            <span class="current">
-                Page {{ strings.number }} of {{ strings.paginator.num_pages }}
-            </span>
+	{% if page < toolbar_max and page > toolbar_min and page != results.number %}
+	<button formaction="{% url 'volume:page' page=page %}">
+		{{ page }}
+	</button>
+	{% elif page == results.number %}
+	<button type="submit" formaction="{% url 'volumes:page' page=page %}">
+		{{ page }}
+	</button>
+	{% endif %}
 
-            {% if strings.has_next %}
-                <a href="?page={{ strings.next_page_number }}">next</a>
-            {% endif %}
-        </span>
-    </div>
+	{% endfor %}
+	<li class="{% if not strings.has_previous %}disabled{% endif %}">
+		<a href="#">«</a>
+	</li>
+	<li class="active">
+		<a href="#">1</a>
+	</li>
+	<li>
+		<a href="#">2</a>
+	</li>
+	<li>
+		<a href="#">3</a>
+	</li>
+	<li>
+		<a href="#">4</a>
+	</li>
+	<li>
+		<a href="#">5</a>
+	</li>
+	<li>
+		<a href="#">»</a>
+	</li>
+</ul>
+<div class="pagination">
+	<span class="step-links"> {% if strings.has_previous %} <a href="?page={{ strings.previous_page_number }}">Previous</a> {% endif %} <span class="current"> Page {{ strings.number }} of {{ strings.paginator.num_pages }} </span> {% if strings.has_next %} <a href="?page={{ strings.next_page_number }}">next</a> {% endif %} </span>
+</div>
 
-    <div>
-        <table class="translation-stats">
-            <tr>
-                <td>Words translated: {{ words_translated }}</td>
-                <td>Words remaining: {{ words_remaining }}</td>
-            </tr>
-            <tr>
-                <td>Sentences translated: {{ sentences_translated }}</td>
-                <td>Sentences remaining: {{ sentences_remaining }}</td>
-            </tr>
-        </table>
-    </div>
+<div>
+	<table class="translation-stats">
+		<tr>
+			<td>Words translated: {{ words_translated }}</td>
+			<td>Words remaining: {{ words_remaining }}</td>
+		</tr>
+		<tr>
+			<td>Sentences translated: {{ sentences_translated }}</td>
+			<td>Sentences remaining: {{ sentences_remaining }}</td>
+		</tr>
+	</table>
+</div>
 {% else %}
-    <p>You don't have strings to translate.</p>
+<p>
+	You don't have strings to translate.
+</p>
 {% endif %}
-    <script src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
-    <script src="{{ STATIC_URL }}js/jquery.autogrow-textarea.js"></script>
-    <script>$(function() {
-   $('textarea').autogrow();
-});</script>
+<script src="{% static 'js/jquery-1.9.1.min.js' %}"></script>
+<script>
+	$(function() {
+		$('textarea').autogrow();
+	}); 
+</script>
+{% endblock %}
+{% block extrascript %}
+<script src="{% static 'js/jquery.autogrow-textarea.js' %}"></script>
 {% endblock %}
