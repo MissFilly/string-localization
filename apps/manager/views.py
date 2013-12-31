@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import modelformset_factory
 from django.db.models import Q, F
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from apps.manager.forms import LoginForm, GenerateForm, ModifyForm, TranslateForm  # , RegistrationForm
+from apps.manager.forms import LoginForm, GenerateForm, EditionForm, TranslateForm  # , RegistrationForm
 from apps.manager.models import Translator, String
 from apps.manager import generator
 
@@ -94,22 +94,25 @@ def LogoutRequest(request):
 
 @login_required
 def ProfileHandler(request):
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login/')
-    context = {'request' : request}
-    return render_to_response('profile.html', context,
-                              context_instance=RequestContext(request))
-
-
-@login_required
-def ModifyStringsHandler(request):
     try:
-        translator = request.user.get_profile()
+        translator = Translator.objects.get(user=request.user)
+        context = {'request' : request, 'translator': translator}
+        return render_to_response('profile.html', context,
+                              context_instance=RequestContext(request))
     except Translator.DoesNotExist:
         return render_to_response('no_translator_profile.html', {'request' : request},
                                   context_instance=RequestContext(request))
 
-    TranslatedFormSet = modelformset_factory(String, form=ModifyForm, extra=0)
+
+@login_required
+def StringsEditionHandler(request):
+    try:
+        translator = Translator.objects.get(user=request.user)
+    except Translator.DoesNotExist:
+        return render_to_response('no_translator_profile.html', {'request' : request},
+                                  context_instance=RequestContext(request))
+
+    TranslatedFormSet = modelformset_factory(String, form=EditionForm, extra=0)
     if request.method == 'POST':
         formset = TranslatedFormSet(request.POST, request.FILES)
         if formset.is_valid():

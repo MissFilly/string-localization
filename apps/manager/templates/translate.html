@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{% load url from future %}
 {% load staticfiles %}
 {% block extrawellclass %}col-lg-8 col-lg-offset-2{% endblock %}
 {% block content %}
@@ -12,7 +13,7 @@
 	{{ form.id }}
 	<div class="panel panel-default">
 		<div class="panel-body">
-			<label>Original text ({{ form.instance.text|count_words }} word{% if form.instance.text|plural %}s{% endif %}):</label>
+			<label>Original text ({{ form.instance.text|count_words }} word{{ form.instance.text|count_words|pluralize }}):</label>
 			<p class="alert alert-dismissable alert-info">
 				{{ form.instance.text|linebreaksbr }}
 			</p>
@@ -27,70 +28,60 @@
 </form>
 
 <ul class="pagination pagination-sm">
-	{# Create A Button Group that contains possible pages to navigate to #}
-	{% for page in paginator.page_range %}
-
-	{% if page < toolbar_max and page > toolbar_min and page != results.number %}
-	<button formaction="{% url 'volume:page' page=page %}">
-		{{ page }}
-	</button>
-	{% elif page == results.number %}
-	<button type="submit" formaction="{% url 'volumes:page' page=page %}">
-		{{ page }}
-	</button>
-	{% endif %}
-
-	{% endfor %}
 	<li class="{% if not strings.has_previous %}disabled{% endif %}">
-		<a href="#">«</a>
+		<a href="{% url 'translate' %}?page=1">&laquo;</a>
 	</li>
+	{% if strings.has_previous %}
+	<li>
+		<a href="{% url 'translate' %}?page=strings.previous_page_number">{{ strings.previous_page_number }}</a>
+	</li>
+	{% endif %}
 	<li class="active">
-		<a href="#">1</a>
+		<a href="{% url 'translate' %}?page=strings.number">{{ strings.number }}</a>
 	</li>
+	{% if strings.has_previous %}
 	<li>
-		<a href="#">2</a>
+		<a href="{% url 'translate' %}?page=strings.next_page_number">{{ strings.next_page_number }}</a>
 	</li>
-	<li>
-		<a href="#">3</a>
-	</li>
-	<li>
-		<a href="#">4</a>
-	</li>
-	<li>
-		<a href="#">5</a>
-	</li>
-	<li>
-		<a href="#">»</a>
+	{% endif %}
+	<li class="{% if not strings.has_next %}disabled{% endif %}">
+		<a href="{% url 'translate' %}?page=strings.paginator.num_pages">&raquo;</a>
 	</li>
 </ul>
-<div class="pagination">
-	<span class="step-links"> {% if strings.has_previous %} <a href="?page={{ strings.previous_page_number }}">Previous</a> {% endif %} <span class="current"> Page {{ strings.number }} of {{ strings.paginator.num_pages }} </span> {% if strings.has_next %} <a href="?page={{ strings.next_page_number }}">next</a> {% endif %} </span>
-</div>
 
-<div>
-	<table class="translation-stats">
-		<tr>
-			<td>Words translated: {{ words_translated }}</td>
-			<td>Words remaining: {{ words_remaining }}</td>
-		</tr>
-		<tr>
-			<td>Sentences translated: {{ sentences_translated }}</td>
-			<td>Sentences remaining: {{ sentences_remaining }}</td>
-		</tr>
-	</table>
+<div class="col-lg-6 translation-stats">
+	<div class="bs-example">
+		<ul class="list-group">
+			<li class="list-group-item">
+				<span class="badge">{{ words_translated }}</span>
+				Words translated
+			</li>
+			<li class="list-group-item">
+				<span class="badge">{{ words_remaining }}</span>
+				Words remaining
+			</li>
+			<li class="list-group-item">
+				<span class="badge">{{ sentences_translated }}</span>
+				Sentences translated
+			</li>
+			<li class="list-group-item">
+				<span class="badge">{{ sentences_remaining }}</span>
+				Sentences remaining
+			</li>
+		</ul>
+	</div>
 </div>
 {% else %}
 <p>
 	You don't have strings to translate.
 </p>
 {% endif %}
-<script src="{% static 'js/jquery-1.9.1.min.js' %}"></script>
+{% endblock %}
+{% block extrascript %}
+<script src="{% static 'js/jquery.autogrow-textarea.js' %}"></script>
 <script>
 	$(function() {
 		$('textarea').autogrow();
 	}); 
 </script>
-{% endblock %}
-{% block extrascript %}
-<script src="{% static 'js/jquery.autogrow-textarea.js' %}"></script>
 {% endblock %}

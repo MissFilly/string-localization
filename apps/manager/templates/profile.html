@@ -1,10 +1,10 @@
 {% extends "base/base.html" %}
 {% block content %}
 <h1>Profile</h1>
-<p>User name: {{ request.user.username }}</p>
-<p>Name: {{ request.user.first_name }}</p>
-<p>Last name: {{ request.user.last_name }}</p>
-<p>Email: {{ request.user.email }}</p>
-<p>Translation language: {{ request.user.language.name }}</p>
-<p>Words translated: {{ request.user.words_translated }}</p>
+<p><label>Username:</label> {{ translator.user.username }}</p>
+<p><label>Name:</label> {{ translator.user.first_name }}</p>
+<p><label>Last name:</label> {{ translator.user.last_name }}</p>
+<p><label>Email:</label> {{ translator.user.email }}</p>
+<p><label>Translation language:</label> {{ translator.language.name }}</p>
+<p><label>Words translated:</label> {{ translator.words_translated }}</p>
 {% endblock %}

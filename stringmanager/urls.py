@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'apps.manager.views.LogoutRequest', name='logout'),
     url(r'^profile/$', 'apps.manager.views.ProfileHandler', name='profile'),
     url(r'^translate/$', 'apps.manager.views.TranslationHandler', name='translate'),
-    url(r'^edit/$', 'apps.manager.views.ModifyStringsHandler', name='edit'),
+    url(r'^edit/$', 'apps.manager.views.StringsEditionHandler', name='edit'),
     url(r'^generate/$', 'apps.manager.views.GenerateHandler', name='generate'),
     url(r'^guidelines/$', 'apps.manager.views.GuidelinesHandler', name='guide'),
 )

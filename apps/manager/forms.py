@@ -46,7 +46,7 @@ class GenerateForm(forms.Form):
                                          widget=forms.CheckboxSelectMultiple())
 
 
-class ModifyForm(forms.ModelForm):
+class EditionForm(forms.ModelForm):
     text = forms.CharField(label=(u'Translation'),
                            widget=forms.Textarea(attrs={'class': 'form-control expand',
                                                         'rows': '2'}))
