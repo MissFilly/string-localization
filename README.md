@@ -19,16 +19,22 @@ Translators save their translations in the database directly.
 
 
 ```
-    virtualenv -p /usr/bin/python3 stringmanagerenv
-    cd stringmanagerenv/
-    source bin/activate
+$ virtualenv -p /usr/bin/python3 stringmanagerenv
+$ cd stringmanagerenv/
+$ source bin/activate
 ```
-
-### Download
 
 Download the application:
 
 
 ```
-    git clone https://github.com/MissFilly/string-localization.git
+$ git clone https://github.com/MissFilly/string-localization.git
+```
+
+Sync the database (repository includes fixtures)
+
+
+```
+$ cd string-localization
+$ python manage.py syncdb
 ```
